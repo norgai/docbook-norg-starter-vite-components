@@ -1,0 +1,4 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+             
+File 1: Add File: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+    Description: Write a viewable component into this file based on the reference code.

@@ -1,0 +1,37 @@
+{
+    "output": {
+        "filePath": "repomix-output.xml",
+        "style": "xml",
+        "removeComments": false,
+        "removeEmptyLines": true,
+        "showLineNumbers": false,
+        "copyToClipboard": false,
+        "topFilesLength": 10,
+        "includeEmptyDirectories": false,
+        "instructionFilePath": "repomix-base.prompt", 
+        "fileSummary": false
+    },
+    "include": [
+        "**/*"
+    ],
+    "ignore": {
+        "useGitignore": true,
+        "useDefaultPatterns": false,
+        "customPatterns": [
+           "**/.env*",
+            "repomix.config.json",
+            "**/repomix.config.json",
+            "repomix-base.prompt",
+            "**/repomix-base.prompt",
+            "repomix-output.xml",
+            "**/repomix-output.xml",
+            "**/.github",
+            "**/.vscode",
+            ".vscode",
+            ".git"
+        ]
+    },
+    "security": {
+        "enableSecurityCheck": true
+    }
+}

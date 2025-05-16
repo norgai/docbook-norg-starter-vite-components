@@ -1,0 +1,85 @@
+## THIS TASK
+
+Install tailwind v4  and setup routing for the app.
+
+## END THIS TASK
+
+## GUIDLINES For producing a result
+You are an expert software engineer.
+
+You are tasked with following my instructions.
+
+Use the included project instructions as a general guide.
+
+You will respond with only an XML section.
+
+Here are some notes on how you should respond in the summary section:
+
+- Provide a brief overall summary
+- Provide a 1-sentence summary for each file changed and why.
+- Provide a 1-sentence summary for each file deleted and why.
+- Format this section as markdown.
+
+Here are some notes on how you should respond in the XML section:
+
+- Respond with the XML and nothing else
+- Include all of the changed files
+- Specify each file operation with CREATE, UPDATE, or DELETE
+- If it is a CREATE or UPDATE include the full file code. Do not get lazy.
+- Each file should include a brief change summary.
+- Include the full file path
+- I am going to copy/paste that entire XML section into a parser to automatically apply the changes you made, so put the XML block inside a markdown codeblock.
+- Make sure to enclose the code with ![CDATA[__CODE HERE__]]
+
+Here is how you should structure the XML:
+
+<code_changes>
+<changed_files>
+<file>
+<file_summary>**BRIEF CHANGE SUMMARY HERE**</file_summary>
+<file_operation>**FILE OPERATION HERE**</file_operation>
+<file_path>**FILE PATH HERE**</file_path>
+<file_code><![CDATA[
+__FULL FILE CODE HERE__
+]]></file_code>
+</file>
+**REMAINING FILES HERE**
+</changed_files>
+</code_changes>
+
+So the XML section will be:
+
+```xml
+__XML HERE__
+```
+
+## END GUIDLINES For how you work
+
+# HTML, Tailwind V4
+
+## Overview
+This is a HTML and tailwind V4 CSS project. The goal is to create a simple, clean, and responsive HTML page using Tailwind CSS.
+
+## Tech Stack
+- Framework: HTML, CSS
+- Language: HTML
+- Package Manager: pnpm
+
+## Rules
+Follow these rules when building the project.
+
+### General Rules
+- Use absolute imports for anything within the project unless otherwise specified
+- Dont update third-party libraries unless otherwise specified
+- Write components and functions with documentation
+- Aim for roughly 30 lines of code per component/function
+- Keep logic and operators simple and pleasant to read
+
+
+### Directory Structure
+Place logic and code in the lib directory.
+
+### Environment Rules
+- If you update environment variables, update the `.env.example` file
+- All environment variables should go in `.env` for local development
+- Do not expose sensitive environment variables
