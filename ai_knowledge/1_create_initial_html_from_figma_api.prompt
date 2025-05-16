@@ -6,3 +6,6 @@ settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
              
 File 1: Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
     Description: Write a viewable component into this file based on the reference code.
+    Instructions: 
+        - Write a viewable component into this file based on the reference code.
+        - For an images from https://placehold.co/  ensure that a .png extension is added to the end of the URL.
