@@ -1,0 +1,15 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+- do not edit any other files
+- Only edit the files listed below.
+- do not touch "src/index.css"
+             
+File 1: Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+    Description: replace the images in the code based on the images provided in the reference code.
+    Instructions: 
+        - Use srcSet size 1x, 2x, 3x <picture> <source> <img> for all images. With lazy loading.  loading="lazy"
+        - For images in the public folder remove the public folder from the URL.
+        - The image src file will be specified in Prompt Part E :: Name: Reference,  turn it into a relative image path with 
+          the following format: 
+            - src: "/{THEME}/components/{COMPONENT}/ai_knowledge/{IMAGE_NAME}"
+        - If multiple images are provided, Assign to images based in order
