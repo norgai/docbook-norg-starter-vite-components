@@ -1,0 +1,10 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+File 1 & 2:  Edit/Add File: 
+    - Location: "src/components/theme/components/{THEME}/components/{COMPONENT}/figmaToCode_v2.tsx"
+    - Description: The reference code attached contains the differences between the original designs and the current component.
+    - Instructions: 
+        - Copy to original code from "src/components/theme/components/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+        - Update the React/TSX code so that the component looks the same as the design.
+        - Make changes and address those differences mentioned in Prompt Part E :: Name: Reference
+        - Updated must comply with tailwind V4. 

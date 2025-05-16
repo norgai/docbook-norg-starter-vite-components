@@ -1,0 +1,16 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+Task 1: Read File: "src/components/theme/{THEME}/components/{COMPONENT}/ai_knowledge/screenshot_review_comparison.prompt"
+    - Description:  The following contains a detailed analysis of the existing component likeness to the original design.
+    - Instructions: 
+        - Review the analysis and make any changes to the code that are required to make the component match the original design.
+        - Only edit tsx files and the variants found in:
+            - Location: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+        - Adjust the styles, fonts, colours, spacings, etc. as needed.
+        - Pay attention to font type, sizes, weights, styles, spacings.
+        - pay attention to margins, paddings, borders, shadows, etc.
+        - Pay attention to the size, shape and position of all elements.
+        - Use Tailwind V4 for all styles.
+        - The goal is to make the component match 95% or higher of the original design.
+        - Be very specific in the differences, try not be vague or general.
+            
