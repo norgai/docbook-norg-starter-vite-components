@@ -1,6 +1,7 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
-- do not edit any other files in the project except for the following as part of this prompt.
+- do not edit any other files
+- Only edit the files listed below.
              
 File 1: Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
     Description: Write a viewable component into this file based on the reference code.

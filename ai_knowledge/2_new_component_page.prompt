@@ -1,0 +1,14 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+- do not edit any other files
+- Only edit the files listed below.
+
+File 1: Add File: "src/pages/theme/{THEME}/components/{COMPONENT}/page.tsx"
+    Description: Add a new page for the component in the theme directory.
+    Instructions: 
+        - Include the component found at "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx" in this page.
+        - Only include the page on a blank page. Nothing else. 
+        - the component should be imported and rendered in the page.
+
+File 2: Add File: "src/App.tsx"
+    Description: Add the the page created in File 1 to the App.tsx file as a route based on the component name.
