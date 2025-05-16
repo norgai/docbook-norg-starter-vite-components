@@ -31,7 +31,10 @@
             "src/pages/About.tsx",
             "src/pages/Home.tsx",
             "src/pages/NotFound.tsx",
-            ".git"
+            ".git",
+            "packages/",
+            "node_modules/",
+            "ai_knowledge/"
         ]
     },
     "security": {

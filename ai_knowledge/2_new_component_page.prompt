@@ -2,6 +2,7 @@ settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- do not touch "src/index.css"
 
 File 1: Add File: "src/pages/theme/{THEME}/components/{COMPONENT}/page.tsx"
     Description: Add a new page for the component in the theme directory.

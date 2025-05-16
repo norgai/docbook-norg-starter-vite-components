@@ -2,6 +2,7 @@ settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- do not touch "src/index.css"
 
 File 1: Edit File: "src/components/Layout.tsx"
     Description: Add the component to the navigation bar.
