@@ -1,15 +1,24 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
-- do not edit any other files
-- Only edit the files listed below.
+- do not edit any other files  
+- only add or update the files listed below  
 - do not touch "src/index.css"
              
-File 1: Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
-    Description: replace the images in the code based on the images provided in the reference code.
-    Instructions: 
-        - Use srcSet size 1x, 2x, 3x <picture> <source> <img> for all images. With lazy loading.  loading="lazy"
-        - For images in the public folder remove the public folder from the URL.
-        - The image src file will be specified in Prompt Part E :: Name: Reference,  turn it into a relative image path with 
-          the following format: 
-            - src: "/{THEME}/components/{COMPONENT}/ai_knowledge/{IMAGE_NAME}"
-        - If multiple images are provided, Assign to images based in order
+File 1: Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"  
+Description: replace the images in the code based on the images provided in the reference code.  
+Instructions:  
+  - The image src file will be specified in Prompt Part E :: Name: Reference,  turn it into a absolute image path with 
+    the following format: 
+    - imageUrl: "/{THEME}/components/{COMPONENT}/ai_knowledge/{IMAGE_NAME}"
+  - Wrap every image in a single-`srcSet` `<picture>` pattern:  
+      1. `<source>` tag with:  
+         - `media="(min-width:1024px)"`  
+         - `srcSet={imageUrl}`  
+         - `sizes="100vw"`  
+      2. Fallback `<img>` tag with:  
+         - `src={imageUrl}`  
+         - the same `alt` text as in the reference  
+         - `className="h-full w-full object-cover mix-blend-multiply"`  
+         - `loading="lazy"`  
+  - Remove any leading `/public` from your URLs.  
+  - If Prompt Part E provides multiple images, emit one `<picture>` per image, in the same order.  

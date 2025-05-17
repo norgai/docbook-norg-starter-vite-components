@@ -1,0 +1,7 @@
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+File 1: Edit File:  "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/components/variants/*.tsx"
+    Description: Contains all the variants
+    Instructions:
+        - Verify that each variant contains a wrapper div with the id "{COMPONENT}"
+        - If missing ensure this is present, don't touch anything else
