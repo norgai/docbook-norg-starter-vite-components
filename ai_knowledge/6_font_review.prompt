@@ -1,4 +1,4 @@
-settings:   CMS: "Sanity"   THEME: "{THEME}"   COMPONENT: "{COMPONENT}"
+settings:   THEME: "{THEME}"   COMPONENT: "{COMPONENT}"
 
 - do not edit any other files  
 - only add or update the files listed below  
