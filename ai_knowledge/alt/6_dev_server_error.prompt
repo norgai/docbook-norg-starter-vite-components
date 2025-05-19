@@ -2,6 +2,8 @@ IMPORTANT TASK: Follow the instructions below exactly.
 
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
+- do not edit any other files
+- Only edit the files listed below.
 
 Step 1:  Review the following error returned by the vite dev server terminal.
     - Location: "src/components/theme/{THEME}/components/{COMPONENT}/*.tsx"

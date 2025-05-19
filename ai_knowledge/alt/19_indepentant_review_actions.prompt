@@ -1,5 +1,8 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
+- do not edit any other files
+- Only edit the files listed below.
+
 File 1 & 2:  Edit/Add File: 
     - Location: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode_v2.tsx"
     - Description: The reference code attached contains the differences between the original designs and the current component.

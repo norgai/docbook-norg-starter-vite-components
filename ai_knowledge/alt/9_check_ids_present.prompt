@@ -1,5 +1,8 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
+- do not edit any other files
+- Only edit the files listed below.
+
 File 1: Edit File:  "src/components/theme/{THEME}/components/{COMPONENT}/*.tsx"
     Description: Contains all the variants
     Instructions:

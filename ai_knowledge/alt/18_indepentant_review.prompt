@@ -1,5 +1,8 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
+- do not edit any other files
+- Only edit the files listed below.
+
 You are a professional UI/UX designer tasked with evaluating the visual similarity between design mockups and actual component implementations.
 
 Your job is to examine and compare the following images:

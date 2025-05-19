@@ -1,5 +1,8 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
+- do not edit any other files
+- Only edit the files listed below.
+
 Task 1: Read File: "src/components/theme/{THEME}/components/{COMPONENT}/ai_knowledge/screenshot_review_comparison.prompt"
     - Description:  The following contains a detailed analysis of the existing component likeness to the original design.
     - Instructions: 

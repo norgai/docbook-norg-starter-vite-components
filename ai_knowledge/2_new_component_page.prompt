@@ -14,9 +14,8 @@ File 1: Edit File: "src/pages/theme/{THEME}/components/{COMPONENT}/page.tsx"
 File 2: Edit File: "src/App.tsx"
     Description: Add the the page created in File 1 to the App.tsx file as a route based on the component name "{COMPONENT}".
     Instructions: 
-        - Add a new route to the App.tsx file for this component page "{COMPONENT}".
+        - Add a new route to the App.tsx file for this component page "{COMPONENT}" only. Add only 1 single route for this component.
         - import the page from the location in File 1.
         - The route should be based on the component name "{COMPONENT}" and should point to the page created in File 1.
-        - The route should be added to the existing routes in the App.tsx file.
         - The route should be added in the same format as the existing routes.
         - The path value should be the component name.
