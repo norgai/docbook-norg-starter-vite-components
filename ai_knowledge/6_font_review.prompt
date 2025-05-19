@@ -1,0 +1,36 @@
+settings:   CMS: "Sanity"   THEME: "{THEME}"   COMPONENT: "{COMPONENT}"
+
+- do not edit any other files  
+- only add or update the files listed below  
+- do not touch "src/index.css"  
+             
+File 1: Add File: “src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx”  
+    Description:  
+      Update the text sections in the code to match the font settings defined in the reference JSON.  
+      Instructions:  
+          1. Refer to the JSON provided in **Prompt Part E :: Name: Reference**.  That JSON contains entries for each TEXT node under two keys:  
+            - `"style"`: the default style for the entire text block  
+            - `"styleOverrideTable"`: per-range overrides 
+            Each style object will include at least:  
+            - `"fontFamily"`  
+            - `"fontSize"` (number, in px)  
+            - `"fontWeight"` (number)  
+            - `"lineHeightPx"` (number)  
+
+          2. In your new **figmaToCode.tsx** file, locate each JSX `<Text>` (or equivalent) element that corresponds to a node in the reference JSON (match by the JSON `"id"` or node `"name"`).  
+
+          3. For each such text element:  
+            - Add or update its `className` or inline `style` so that it uses:  
+              - `font-family`: exactly the JSON’s `"fontFamily"`  
+              - `font-size`: convert the JSON’s `"fontSize"` px value into `rem` (divide px by 16) or keep as `px` if the project convention is px  
+              - `font-weight`: the JSON’s numeric `"fontWeight"`  
+              - `line-height`: either unitless (`lineHeightPx / fontSize`) or explicit px (use the JSON’s `"lineHeightPx"`)  
+
+          4. Preserve all existing component structure, imports, and logic.  Only modify or add styling on the text elements.  
+
+          5. Do not introduce any new files, imports, or dependencies beyond this one component file.  
+
+          6. characterStyleOverrides:
+              - this contains the font settings for each character in the text node.
+              - if the characterStyleOverrides is empty, then use the default style for the entire text block.
+              - if the characterStyleOverrides is not empty, then use the font settings for each character in the text node.
