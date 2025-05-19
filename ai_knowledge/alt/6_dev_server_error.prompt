@@ -1,0 +1,11 @@
+IMPORTANT TASK: Follow the instructions below exactly.
+
+settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+
+Step 1:  Review the following error returned by the vite dev server terminal.
+    - Location: "src/components/theme/{THEME}/components/{COMPONENT}/*.tsx"
+    - Description:  Identify and fix the error in the code.
+    - Instructions: 
+        - only change the code related to the error.
+

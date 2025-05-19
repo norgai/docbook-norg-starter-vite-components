@@ -1,6 +1,6 @@
 settings: "CMS": "Sanity", "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
-File 1: Edit File:  "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode*.tsx"
+File 1: Edit File:  "src/components/theme/{THEME}/components/{COMPONENT}/*.tsx"
     Description: Contains all the variants
     Instructions:
         - Verify that each variant contains a wrapper div with the id "{COMPONENT}"
