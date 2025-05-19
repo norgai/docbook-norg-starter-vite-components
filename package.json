@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "repomix": "repomix"
+    "repomix:component:copy": "cp -f ai_knowledge/repo_reserve/component/repomix-base.prompt ./ && cp -f ai_knowledge/repo_reserve/component/repomix.config.json ./",
+    "repomix": "cp -f ./ai_knowledge/repo_reserve/workspace/repomix-base.prompt ./ && cp -f ./ai_knowledge/repo_reserve/workspace/repomix.config.json ./ && repomix"
   },
   "dependencies": {
     "react": "^19.1.0",
