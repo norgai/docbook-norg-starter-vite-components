@@ -18,7 +18,6 @@
                 <details>
                     1) Use regular markdown formatting (like triple backticks) only for explanations when NO code changes are needed.<br/>
                     2) Do not edit any other files in the {COMPONENT} folder other than the ones listed below.
-                    3) Retrieve image data using:  import { getCmsImage } from "@conversiondigital/headless-basics-data"; const { hasImage, imageLocation, altText } = getCmsImage(matchingData); 
                 </details>
             </rule>
         </newCodeRules>

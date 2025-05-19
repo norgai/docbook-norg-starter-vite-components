@@ -12,31 +12,37 @@
         "fileSummary": false
     },
     "include": [
-        "**/*"
+        "src/components/theme/ata/components/openingbanner/**",
+        "src/pages/theme/ata/components/openingbanner/**"
     ],
     "ignore": {
         "useGitignore": true,
         "useDefaultPatterns": false,
         "customPatterns": [
            "**/.env*",
-           "**/.svg*",
-           ".gitignore",
             "repomix.config.json",
             "**/repomix.config.json",
             "repomix-base.prompt",
             "**/repomix-base.prompt",
+            "**/*.prompt",
             "repomix-output.xml",
             "**/repomix-output.xml",
             "**/.github",
             "**/.vscode",
-            "**/*.prompt",
             ".vscode",
-            "src/pages/About.tsx",
-            "src/pages/Home.tsx",
-            "src/pages/NotFound.tsx",
-            ".git",
-            "node_modules/",
-            "ai_knowledge/**/*.prompt"
+            "**/.gitignore",
+            "**/*.git",
+            "**/*.storybook",
+            "**/*.idea",
+            "**/public",
+            "**/node_modules",
+            "**/repomix.config.json",
+            "**/*.css",
+            "**/upsertDemoData.ts",  
+            "**/package-lock.json",  
+            "**/tsconfig.json",
+            "src/theme/components/ata/components/openingbanner/**/*.prompt",
+            "src/theme/components/ata/components/openingbanner/ai_knowledge/!(final_fields).prompt"
         ]
     },
     "security": {

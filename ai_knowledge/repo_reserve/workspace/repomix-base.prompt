@@ -1,5 +1,5 @@
 ## GUIDLINES For producing a result
-You are an expert at website development. React and Next.js and typescript.
+You are an expert at website development. React and Vite and typescript.
 
 You are tasked with following my instructions.
 
@@ -41,16 +41,16 @@ __XML HERE__
 
 ## END GUIDLINES For how you work
 
-# Next.js/TypeScript Project Guidelines
+# Vite/TypeScript Project Guidelines
 
 ## Overview
-This is a Next.js project template.
+This is a Vite project template.
 
 ## Tech Stack
-- Framework: Next.js 15+
+- Framework: Vite 15+
 - Language: TypeScript, React 19
 - State Management: React Context / Redux Toolkit
-- API Layer: Next.js API Routes
+- API Layer: Vite API Routes
 - Styling: Tailwind CSS V4
 - Testing: Jest and React Testing Library
 - Package Manager: pnpm
@@ -66,10 +66,10 @@ Follow these rules when building the project.
 - Aim for roughly 30 lines of code per component/function
 - Keep logic and operators simple and pleasant to read
 - Use TypeScript types/interfaces for all components, functions, and methods
-- Use Next.js API routes for building APIs
+- Use Vite API routes for building APIs
 
 ### Directory Structure
-Follow the next.js app directory 
+Follow the Vite app directory 
 
 ### Environment Rules
 - If you update environment variables, update the `.env.example` file

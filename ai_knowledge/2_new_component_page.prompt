@@ -10,6 +10,7 @@ File 1: Edit File: "src/pages/theme/{THEME}/components/{COMPONENT}/page.tsx"
         - Include the component found at "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx" in this page.
         - Only include the page on a blank page. Nothing else. 
         - the component "{COMPONENT}" should be imported and rendered in the page.
+        - imports should not start with @ and be relative to the file.
 
 File 2: Edit File: "src/App.tsx"
     Description: Add the the page created in File 1 to the App.tsx file as a route based on the component name "{COMPONENT}".

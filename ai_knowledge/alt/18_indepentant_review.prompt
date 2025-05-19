@@ -19,7 +19,7 @@ SCORING GUIDELINES:
 - Look for missing or additional elements between design and implementation
 
 
-File 1: Edit/Add File: src/components/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt
+File 1: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt
     Description:  Identify any differences among the images just uploaded by inserting a similarity score into this file.
     Instructions: 
         - Only add the single file: independent_review_comparison.prompt
@@ -27,7 +27,7 @@ File 1: Edit/Add File: src/components/theme/{THEME}/components/{COMPONENT}/ai_kn
         - Estimate a percentage of how alike the images are on a single line: SIMILARITY_SCORE={percentage}
         - no other contents is required for this file.
 
-File 2: Edit/Add File: src/components/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt
+File 2: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt
     Description:  Identify any differences among the images just uploaded
     Instructions: 
         - Only add/edit the single file: independent_review_differences.prompt
