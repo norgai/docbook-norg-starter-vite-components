@@ -1,86 +1,83 @@
+
 import { Outlet, Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 /**
  * Layout component that provides consistent structure for all pages
- * Includes header, navigation, main content via Outlet, and footer
+ * Includes header with responsive navigation, main content via Outlet, and footer
  */
 export default function Layout() {
   const location = useLocation();
-  
-  // Function to determine if a nav link is active
-  const isActive = (path: string) => location.pathname === path;
-  
+  const [isComponentsOpen, setIsComponentsOpen] = useState(false);
+
+  // Function to check if a link is active
+  const isActive = (path: string) => {
+    return location.pathname === path ? 'text-indigo-600 font-medium' : 'text-gray-600 hover:text-indigo-600';
+  };
+
+  // Toggle the components dropdown
+  const toggleComponentsDropdown = () => {
+    setIsComponentsOpen(!isComponentsOpen);
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <header className="sticky top-0 z-10 bg-white shadow-sm">
-        <div className="container py-4">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <Link 
-                to="/" 
-                className="text-xl font-bold bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent"
-              >
-                My App
+    <div className="flex min-h-screen flex-col">
+      <header className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <nav className="flex items-center justify-between flex-wrap">
+            <div className="flex items-center flex-shrink-0 mr-6">
+              <Link to="/" className="text-xl font-bold text-indigo-600">
+                ATA Component Library
               </Link>
-              <div className="flex space-x-6">
-                <Link 
-                  to="/" 
-                  className={`font-medium transition-colors ${
-                    isActive('/') 
-                      ? 'text-primary-600' 
-                      : 'text-gray-600 hover:text-primary-500'
-                  }`}
-                >
-                  Home
-                </Link>
-                <Link 
-                  to="/about" 
-                  className={`font-medium transition-colors ${
-                    isActive('/about') 
-                      ? 'text-primary-600' 
-                      : 'text-gray-600 hover:text-primary-500'
-                  }`}
-                >
-                  About
-                </Link>
-              </div>
             </div>
-            <div className="hidden sm:block">
-              <a 
-                href="https://github.com" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-secondary text-sm"
-              >
-                GitHub
-              </a>
+            <div className="flex space-x-6">
+              <Link to="/" className={isActive('/')}>
+                Home
+              </Link>
+              <div className="relative">
+                <button 
+                  onClick={toggleComponentsDropdown}
+                  className="flex items-center text-gray-600 hover:text-indigo-600 focus:outline-none"
+                  aria-expanded={isComponentsOpen}
+                >
+                  Components
+                  <svg 
+                    className={`ml-1 h-5 w-5 transition-transform ${isComponentsOpen ? 'rotate-180' : ''}`} 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    viewBox="0 0 20 20" 
+                    fill="currentColor"
+                  >
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                {isComponentsOpen && (
+                  <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+                    <div className="py-1 max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical">
+                      <Link to="/theme/ata/components/experthelp" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                        Expert Help
+                      </Link>
+
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Link to="/about" className={isActive('/about')}>
+                About
+              </Link>
             </div>
           </nav>
         </div>
       </header>
       <main className="flex-grow">
-        <div className="container py-8 md:py-12">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <Outlet />
         </div>
       </main>
-      <footer className="bg-gray-100 py-8 border-t border-gray-200">
-        <div className="container">
-          <div className="flex flex-col sm:flex-row justify-between items-center">
-            <p className="text-gray-500 mb-4 sm:mb-0">
-              © {new Date().getFullYear()} My App. All rights reserved.
-            </p>
-            <div className="flex space-x-6">
-              <a href="#" className="text-gray-500 hover:text-primary-600 transition-colors">
-                Terms
-              </a>
-              <a href="#" className="text-gray-500 hover:text-primary-600 transition-colors">
-                Privacy
-              </a>
-              <a href="#" className="text-gray-500 hover:text-primary-600 transition-colors">
-                Contact
-              </a>
-            </div>
-          </div>
+      <footer className="bg-gray-50 py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-gray-500">
+            © {new Date().getFullYear()} ATA Theme Component Library. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

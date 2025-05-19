@@ -33,11 +33,8 @@
             <guideline>Always generate responsive designs using Tailwind CSS (v4). Use flexbox or grid for layouts, and prefer utility classes for spacing and styling.</guideline>
             <guideline>Utilize shadcn/ui library components whenever possible. Do not modify existing shadcn/ui library files.</guideline>
             <guideline>Use toast components for important user notifications. Avoid overengineering error handling; let errors bubble up unless the user asks otherwise.</guideline>
-            <guideline>@tanstack/react-query is installed for data fetching and state management. Use the object format for the useQuery hook (with queryKey, queryFn, etc.).</guideline>
-            <guideline>When requesting images, use: <code>import {'{ getCmsImage }'} from "@conversiondigital/headless-basics-data"; const {'{ hasImage, imageLocation, altText }'} = getCmsImage(matchingData);</code></guideline>
             <guideline>Use type safety wherever possible (e.g., matchingData?.title) and keep your code logically simple and clear.</guideline>
             <guideline>Only implement changes explicitly requested by the user. Do not add extra features or code unrelated to the request.</guideline>
-            <guideline>For all images use a placeholder https://picsum.photos/200/300, with next/image.</guideline>
         </codingGuidelines>
 
         <fileManagement>
