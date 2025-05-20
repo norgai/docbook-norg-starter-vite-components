@@ -5,6 +5,7 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 File 1: Edit/Add File: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/screenshot_review_comparison.prompt"
     Description:  Identify any differences among the images just uploaded.
+    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
     Instructions: 
         - Highlight the differences between the original designs and the current component.
         - Indicate how close the component is to the design in the TSX comments.

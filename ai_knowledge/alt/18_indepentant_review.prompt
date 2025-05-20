@@ -21,6 +21,7 @@ SCORING GUIDELINES:
 
 File 1: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt
     Description:  Identify any differences among the images just uploaded by inserting a similarity score into this file.
+    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
     Instructions: 
         - Only add the single file: independent_review_comparison.prompt
         - Do not add or edit any other files.
@@ -29,6 +30,7 @@ File 1: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/com
 
 File 2: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt
     Description:  Identify any differences among the images just uploaded
+    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
     Instructions: 
         - Only add/edit the single file: independent_review_differences.prompt
         - Do not add or edit any other files.
