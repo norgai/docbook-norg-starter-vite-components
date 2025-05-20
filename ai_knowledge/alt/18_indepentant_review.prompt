@@ -2,6 +2,7 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
 
 You are a professional UI/UX designer tasked with evaluating the visual similarity between design mockups and actual component implementations.
 
@@ -19,18 +20,18 @@ SCORING GUIDELINES:
 - Look for missing or additional elements between design and implementation
 
 
-File 1: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt
+File 1: Edit/Add File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt</file_path>"
     Description:  Identify any differences among the images just uploaded by inserting a similarity score into this file.
-    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
+    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/</file_path>"
     Instructions: 
         - Only add the single file: independent_review_comparison.prompt
         - Do not add or edit any other files.
         - Estimate a percentage of how alike the images are on a single line: SIMILARITY_SCORE={percentage}
         - no other contents is required for this file.
 
-File 2: Edit/Add File: packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt
+File 2: Edit/Add File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt</file_path>"
     Description:  Identify any differences among the images just uploaded
-    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
+    location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/</file_path>"
     Instructions: 
         - Only add/edit the single file: independent_review_differences.prompt
         - Do not add or edit any other files.

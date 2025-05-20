@@ -2,12 +2,12 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
 
-File 1 & 2:  Edit/Add File: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+File 1 & 2:  Edit/Add File: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
     - Description: The reference code attached contains the differences between the original designs and the current component.
-    - Location: Ensure the file is add/edited in this folder: "src/components/theme/{THEME}/components/{COMPONENT}/"
     - Instructions: 
-        - Copy to original code from "src/components/theme/components/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+        - Copy to original code from "<file_path>/src/components/theme/components/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
         - Update the React/TSX code so that the component looks the same as the design.
         - Make changes and address those differences mentioned in Prompt Part E :: Name: Reference
         - Updated must comply with tailwind V4. 

@@ -2,10 +2,10 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
 
-Task 1: Add "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/preview_screenshot_analysis.prompt"
+Task 1: Add "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/preview_screenshot_analysis.prompt</file_path>"
     - Description:  Create a detailed analysis of the component provided in the screenshot / uploaded file.
-    - Location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
     - Instructions: 
         - Adjust the styles, fonts, colours, spacings, etc. as needed.
         - Pay attention to font type, sizes, weights, styles, spacings.

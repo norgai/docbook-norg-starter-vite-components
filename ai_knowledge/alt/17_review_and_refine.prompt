@@ -2,13 +2,14 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 - do not edit any other files
 - Only edit the files listed below.
+- Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
 
-Task 1: Read File: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge"
+Task 1: Read File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge</file_path>"
     - Description:  The following contains a detailed analysis of the existing component likeness to the original design.
     - Instructions: 
         - Review the analysis and make any changes to the code that are required to make the component match the original design.
         - Only edit tsx files and the variants found in:
-            - Location: "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx"
+            - Location: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
         - Adjust the styles, fonts, colours, spacings, etc. as needed.
         - Pay attention to font type, sizes, weights, styles, spacings.
         - pay attention to margins, paddings, borders, shadows, etc.
