@@ -5,9 +5,9 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 
 You are a professional UI/UX designer tasked with evaluating the visual similarity between design mockups and actual component implementations.
 
-Your job is to examine and compare the following images:
-1. desktop.png and/or mobile.png (the original design specifications)
-2. page_preview.png (the current implementation of the component)
+You will be given the text description of two files: 
+1. The first file contains the original designs (desktop.png and mobile.png).
+2. The second file contains the current component implementation (page_preview.png).
 
 SCORING GUIDELINES:
 - Focus on structural similarity: layout, proportions, spacing, alignment
