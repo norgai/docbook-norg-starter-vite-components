@@ -7,7 +7,6 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 File 1 & 2:  Edit/Add File: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
     - Description: The reference code attached contains the differences between the original designs and the current component.
     - Instructions: 
-        - Copy to original code from "<file_path>/src/components/theme/components/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
         - Update the React/TSX code so that the component looks the same as the design.
         - Make changes and address those differences mentioned in Prompt Part E :: Name: Reference
         - Updated must comply with tailwind V4. 
