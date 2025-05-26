@@ -18,5 +18,6 @@ File 2: Edit File: "src/App.tsx"
         - Add a new route to the App.tsx file for this component page "{COMPONENT}" only. Add only 1 single route for this component.
         - import the page from the location in File 1.
         - The route should be based on the component name "{COMPONENT}" and should point to the page created in File 1.
+        - The route path should be "theme/ata/components/{COMPONENT}"
         - The route should be added in the same format as the existing routes.
         - The path value should be the component name.

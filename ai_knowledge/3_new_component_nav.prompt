@@ -5,9 +5,10 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 - do not touch "src/index.css"
 
 File 1: Edit File: "src/components/Layout.tsx"
-    Description: Add the component to the navigation bar.
+    Description: Add the component to the navigation bar in the components drop down.
     Instructions: 
         - Add the component to the navigation bar in the Layout.tsx file.
         - The component should be added to the navigation bar as a link.
+        - The link should be placed in the components drop down menu.
         - The link should point to the page for this component only.
         - The link should be named after the component name.
