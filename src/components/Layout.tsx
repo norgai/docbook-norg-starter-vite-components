@@ -27,7 +27,7 @@ export default function Layout() {
           <nav className="flex items-center justify-between flex-wrap">
             <div className="flex items-center flex-shrink-0 mr-6">
               <Link to="/" className="text-xl font-bold text-indigo-600">
-                ATA Component Library
+                Component Library
               </Link>
             </div>
             <div className="flex space-x-6">
@@ -53,9 +53,9 @@ export default function Layout() {
                 {isComponentsOpen && (
                   <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
                     <div className="py-1 max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical">
-                      <Link to="/theme/ata/components/experthelp" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                      {/* <Link to="/theme/ata/components/experthelp" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
                         Expert Help
-                      </Link>
+                      </Link> */}
 
                     </div>
                   </div>
@@ -76,7 +76,7 @@ export default function Layout() {
       <footer className="bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-gray-500">
-            © {new Date().getFullYear()} ATA Theme Component Library. All rights reserved.
+            © {new Date().getFullYear()} Theme Component Library. All rights reserved.
           </p>
         </div>
       </footer>
