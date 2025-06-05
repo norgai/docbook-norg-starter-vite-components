@@ -17,6 +17,7 @@ dist-ssr
 packages/*
 !.vscode/extensions.json
 .idea
+.venv
 .DS_Store
 *.suo
 *.ntvs*
@@ -25,3 +26,5 @@ packages/*
 *.sw?
 pnpm-lock.yaml
 repomix-output.xml
+repomix-base.prompt
+repomix.config.json
