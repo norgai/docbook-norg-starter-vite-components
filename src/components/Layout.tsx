@@ -61,22 +61,18 @@ export default function Layout() {
                   </div>
                 )}
               </div>
-              <Link to="/about" className={isActive('/about')}>
-                About
-              </Link>
+              
             </div>
           </nav>
         </div>
       </header>
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main>
           <Outlet />
-        </div>
       </main>
       <footer className="bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-gray-500">
-            © {new Date().getFullYear()} Theme Component Library. All rights reserved.
+            © {new Date().getFullYear()} Norg.ai - Component Library. All rights reserved.
           </p>
         </div>
       </footer>
