@@ -1,0 +1,386 @@
+settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+- do not edit any other files
+- Only edit the files listed below.
+- Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
+
+Task 1: Add "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/design_screenshot_analysis.prompt</file_path>"
+    - Description:  Create a detailed analysis of the component provided in the screenshot / uploaded file.
+    - Instructions: 
+        - Adjust the styles, fonts, colours, spacings, etc. as needed.
+        - Pay attention to font type, sizes, weights, styles, spacings.
+        - pay attention to margins, paddings, borders, shadows, etc.
+        - Pay attention to the size, shape and position of all elements.
+        - Use Tailwind V4 for all styles.
+        - Be very specific in the differences, try not be vague or general.
+        - Focus on structural similarity: layout, proportions, spacing, alignment
+        - Evaluate stylistic accuracy: colors, typography, shadows, borders, opacity
+        - Consider responsive fidelity
+        - Comment on UI elements for size, position, and shape consistency. 
+        - Identify Heading, Subheading, Body text, and any other text elements.
+        - look at fonts, styles, colours, images, spacings, etc. as needed.
+        - Pay attention to font type, sizes, weights, styles, spacings.
+            - Try to identify the exact font type to use
+        - pay attention to margins, paddings, borders, shadows, etc.
+        - Pay attention to the size, shape and position of all elements.
+        - Be very specific in the differences, try not be vague or general. 
+        - try to highlight specific colours or Hex colour codes. 
+        - Attempt to pick out the exact Tailwind V4 classes that would be used to creted it.
+
+        Layout Structure
+
+        Describe the overall layout structure (flex, grid, block, etc.)
+        Document the component's container dimensions (fixed, responsive, percentage-based)
+        Identify the positioning system (relative, absolute, sticky)
+        Analyze the component's responsiveness across different viewport sizes
+        Document any CSS Grid template areas, rows, or columns
+        Note any z-index layering or stacking context
+
+        Typography Analysis
+
+        Font family identification (primary, secondary, fallback options)
+
+        Main text font: [font name]
+        Heading font: [font name]
+        Accent text: [font name]
+
+
+        Font size measurements for each text element (in rem or px)
+
+        Heading: [size]rem/px
+        Subheading: [size]rem/px
+        Body text: [size]rem/px
+        Caption/auxiliary text: [size]rem/px
+
+
+        Font weight specifications (100-900)
+
+        Heading weight: [weight]
+        Subheading weight: [weight]
+        Body text weight: [weight]
+        Bold/emphasized text: [weight]
+
+
+        Line height settings (normal, tight, relaxed, precise values)
+        Letter spacing characteristics (tracking)
+        Text alignment (left, center, right, justified)
+        Text decoration (underline, strikethrough, none)
+        Text transformation (uppercase, lowercase, capitalize)
+        Font style (italic, normal)
+        Font variant features (small-caps, numeric variants, ligatures)
+        Text overflow handling (ellipsis, clip, wrap behavior)
+        Any dynamic text behaviors (truncation, expansion)
+
+        Color Palette
+
+        Background colors (primary, secondary, accent)
+
+        Primary background: [HEX] / [Tailwind class]
+        Secondary background: [HEX] / [Tailwind class]
+        Accent/highlight backgrounds: [HEX] / [Tailwind class]
+
+
+        Text colors
+
+        Primary text: [HEX] / [Tailwind class]
+        Secondary text: [HEX] / [Tailwind class]
+        Accent text: [HEX] / [Tailwind class]
+        Link text: [HEX] / [Tailwind class]
+
+
+        Border colors: [HEX] / [Tailwind class]
+        Shadow colors and opacity: [HEX] / [Tailwind class]
+        Gradient specifications (if present)
+
+        Direction: [linear/radial/conic] [angle/position]
+        Color stops: [HEX] at [position]%
+
+
+        Color opacity/transparency values
+        Color contrast ratios (for accessibility)
+        Color transitions or animations
+        Dark mode color variations (if applicable)
+
+        Spacing & Sizing
+
+        Margin specifications (top, right, bottom, left)
+
+        Outer container: [size]rem/px
+        Inner elements: [size]rem/px
+
+
+        Padding measurements (top, right, bottom, left)
+
+        Container padding: [size]rem/px
+        Element internal padding: [size]rem/px
+
+
+        Gap spacing between elements: [size]rem/px
+        Width and height specifications
+
+        Container width: [size]rem/px/%/auto
+        Element widths: [size]rem/px/%/auto
+        Heights (fixed vs. content-based): [size]rem/px/%/auto
+
+
+        Min/max width constraints: [size]rem/px/%
+        Min/max height constraints: [size]rem/px/%
+        Aspect ratios (if applicable)
+        Responsive breakpoints for dimension changes
+
+        Mobile: [width]px and below
+        Tablet: [width]px to [width]px
+        Desktop: [width]px and above
+
+
+        Spacing scale consistency (increments of 4px, 8px, etc.)
+
+        Borders & Outlines
+
+        Border width: [size]px
+        Border style: solid/dashed/dotted/etc.
+        Border radius: [size]px/rem/%
+
+        Container corners: [size]px/rem/%
+        Button corners: [size]px/rem/%
+        Input field corners: [size]px/rem/%
+
+
+        Border color: [HEX] / [Tailwind class]
+        Custom corner radius variations (top-left, top-right, etc.)
+        Outline properties for focus states
+        Inner/outer border implementations
+        Divider styling between elements
+
+        Shadows & Effects
+
+        Box shadow specifications
+
+        Offset-x: [size]px
+        Offset-y: [size]px
+        Blur radius: [size]px
+        Spread radius: [size]px
+        Color: [HEX] with [opacity]
+
+
+        Drop shadow vs. box shadow implementations
+        Text shadow details (if present)
+        Multiple shadow layering
+        Inner shadow effects
+        Glow effects or halo implementations
+        Shadow behavior on hover/focus states
+        3D effects through shadow usage
+
+        Background Treatments
+
+        Solid color backgrounds: [HEX] / [Tailwind class]
+        Gradient backgrounds
+
+        Type: linear/radial/conic
+        Direction/position: [degree]/[position]
+        Color stops: [HEX] at [position]%
+
+
+        Background images
+
+        URL/path
+        Size: cover/contain/[specific dimensions]
+        Position: center/top-left/etc.
+        Repeat: no-repeat/repeat-x/repeat-y/repeat
+
+
+        Background blend modes
+        Background opacity/transparency
+        Background attachment: fixed/scroll/local
+        Backdrop filter effects (blur, brightness, etc.)
+        Background masks or clipping paths
+
+        Interactive States
+
+        Default state styling
+        Hover state changes
+
+        Background color change: [HEX] / [Tailwind class]
+        Text color change: [HEX] / [Tailwind class]
+        Border changes: [specification]
+        Shadow modifications: [specification]
+        Scale/transform adjustments: [specification]
+
+
+        Focus state styling
+
+        Focus ring color: [HEX] / [Tailwind class]
+        Focus ring width: [size]px
+        Focus ring offset: [size]px
+
+
+        Active/pressed state styling
+        Disabled state appearance
+        Visited state (for links)
+        Loading state indicators
+        Error state styling
+        Success state styling
+        Transition properties
+
+        Properties that animate: [list of CSS properties]
+        Duration: [time]ms
+        Timing function: ease/linear/cubic-bezier([values])
+        Delay: [time]ms
+
+
+
+        Icons & Graphics
+
+        Icon dimensions: [size]px/rem
+        Icon positioning within component
+        Icon colors: [HEX] / [Tailwind class]
+        Icon weight/stroke width: [size]px
+        Icon library identification (if recognizable)
+        SVG specifications
+
+        Viewbox settings
+        Path details
+        Stroke/fill properties
+
+
+        Icon alignment with text
+        Icon spacing from adjacent elements: [size]px/rem
+        Icon state changes (hover, active, etc.)
+        Decorative graphic elements
+        Illustration style and characteristics
+
+        Animations & Transitions
+
+        Transition properties
+
+        Affected properties: all/[specific properties]
+        Duration: [time]ms
+        Timing function: ease/linear/cubic-bezier([values])
+        Delay: [time]ms
+
+
+        Entrance animations
+
+        Type: fade/slide/scale/etc.
+        Duration: [time]ms
+        Timing function: [function]
+
+
+        Exit animations
+        Hover/focus animation details
+        Loading state animations
+        Transform origins
+        Keyframe animation specifications
+        Animation playback settings (iterations, direction, fill-mode)
+        Scroll-triggered animations
+        Intersection observer-based animations
+        Motion paths for complex animations
+
+        Component-Specific Elements
+
+        Button styling
+
+        Default state
+        Hover state
+        Active state
+        Disabled state
+        Focus state
+        Size variants
+        Color variants
+
+
+        Input field styling
+
+        Border
+        Placeholder text
+        Focus state
+        Error state
+        Disabled state
+
+
+        Dropdown/select styling
+        Checkbox/radio button styling
+        Toggle switch styling
+        Card styling
+        Navigation elements styling
+        Tab styling
+        Modal/dialog styling
+        Tooltip styling
+        Pagination styling
+        Progress indicator styling
+        Alert/notification styling
+        Table styling
+
+        Responsive Behavior
+
+        Mobile-specific layout (< 640px)
+        Tablet-specific layout (640px - 1024px)
+        Desktop-specific layout (> 1024px)
+        Element reordering at different breakpoints
+        Element visibility changes across breakpoints
+        Spacing adjustments between breakpoints
+        Font size scaling between breakpoints
+        Image/media sizing and cropping at breakpoints
+        Touch target sizing considerations for mobile
+        Hover state alternatives for touch devices
+
+        Accessibility Considerations
+
+        Color contrast ratios (WCAG AA/AAA compliance)
+        Focus indicator visibility and prominence
+        Text size legibility
+        Touch target sizing (minimum 44x44px for mobile)
+        Keyboard navigation support
+        Screen reader friendly structure
+        ARIA attributes present
+        Reduced motion alternatives
+        Alternative text for images/icons
+
+        Tailwind CSS Implementation
+
+        Container classes
+        class="[exact Tailwind classes for container]"
+
+        Typography classes
+        class="[exact Tailwind classes for typography]"
+
+        Spacing classes
+        class="[exact Tailwind classes for spacing]"
+
+        Color classes
+        class="[exact Tailwind classes for colors]"
+
+        Border classes
+        class="[exact Tailwind classes for borders]"
+
+        Shadow classes
+        class="[exact Tailwind classes for shadows]"
+
+        Responsive utility classes
+        class="[exact Tailwind classes for responsive behavior]"
+
+        Interactive state classes
+        class="[exact Tailwind classes for interactive states]"
+
+        Custom utility extensions needed
+
+        Component Markup Structure
+        jsx// Provide a detailed JSX structure that would recreate the component
+        <div className="[container classes]">
+        <header className="[header classes]">
+            <h2 className="[heading classes]">[Heading Text]</h2>
+            <p className="[subheading classes]">[Subheading Text]</p>
+        </header>
+        <main className="[content classes]">
+            {/* Detail each element in the component with exact classes */}
+        </main>
+        <footer className="[footer classes]">
+            {/* Footer elements with exact classes */}
+        </footer>
+        </div>
+        CSS Properties Not Covered by Tailwind
+        css/* List any CSS that cannot be handled by Tailwind classes */
+        .component-specific-class {
+        property: value;
+        }
+                    
