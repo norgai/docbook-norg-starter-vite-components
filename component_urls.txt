@@ -1,0 +1,1 @@
+mottocomponent: http://localhost:3000/library/mottocomponent

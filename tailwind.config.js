@@ -11,6 +11,7 @@ export default {
         'sans': ['Inter', 'sans-serif'],
         'display': ['Inter', 'sans-serif'],
         'inter': ['"Inter"', 'sans-serif'],
+        'Urbanist': ['"Urbanist"', 'sans-serif'],
       },
     },
   },
