@@ -19,9 +19,9 @@ export default function MottoComponent() {
           data-layer="All new technologies. No apologies." 
           className="absolute inset-0 flex items-center justify-center px-4"
         >
-          <h1 className="text-white text-4xl md:text-5xl lg:text-[96px] font-extrabold font-sans text-center leading-tight max-w-4xl">
-            All new technologies. <span className="text-amber-500">No apologies.</span>
-          </h1>
+          <div className="text-white text-4xl md:text-5xl lg:text-6xl font-extrabold font-Urbanist text-center leading-tight max-w-4xl">
+            All new technologies. No apologies.
+          </div>
         </div>
       </div>
     </div>
