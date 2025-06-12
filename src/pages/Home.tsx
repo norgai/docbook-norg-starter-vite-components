@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+// import { useState } from 'react';
+// import { Link } from 'react-router-dom';
 
 /**
  * Home page component
@@ -10,7 +10,7 @@ export default function Home() {
   
   return (
     <div>
-      
+      Homepage
     </div>
   );
 }
