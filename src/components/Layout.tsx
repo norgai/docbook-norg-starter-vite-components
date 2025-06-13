@@ -1,11 +1,14 @@
 
-import { Outlet, Link, useLocation } from 'react-router-dom';
+
 import { useState } from 'react';
+import { useLocation, Link, Outlet } from 'react-router-dom';
+import { renderLinks } from '../utils/component-links';
 
 /**
  * Layout component that provides consistent structure for all pages
  * Includes header with responsive navigation, main content via Outlet, and footer
  */
+
 export default function Layout() {
   const location = useLocation();
   const [isComponentsOpen, setIsComponentsOpen] = useState(false);
@@ -35,32 +38,23 @@ export default function Layout() {
                 Home
               </Link>
               <div className="relative">
-                <button 
+                <button
                   onClick={toggleComponentsDropdown}
                   className="flex items-center text-gray-600 hover:text-indigo-600 focus:outline-none"
                   aria-expanded={isComponentsOpen}
                 >
                   Components
-                  <svg 
-                    className={`ml-1 h-5 w-5 transition-transform ${isComponentsOpen ? 'rotate-180' : ''}`} 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    viewBox="0 0 20 20" 
+                  <svg
+                    className={`ml-1 h-5 w-5 transition-transform ${isComponentsOpen ? 'rotate-180' : ''}`}
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
                     fill="currentColor"
                   >
                     <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
                 {isComponentsOpen && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                    <div className="py-1 max-h-96 overflow-y-auto" role="menu" aria-orientation="vertical">
-                      <Link to="/theme/conversion/components/mottocomponent" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                        Motto Component
-                      </Link>
-                      {/* <Link to="/theme/ata/components/experthelp" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
-                        Expert Help
-                      </Link> */}
-                    </div>
-                  </div>
+                  renderLinks()
                 )}
               </div>
             </div>
@@ -68,7 +62,7 @@ export default function Layout() {
         </div>
       </header>
       <main>
-          <Outlet />
+        <Outlet />
       </main>
       <footer className="bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,3 +74,5 @@ export default function Layout() {
     </div>
   );
 }
+
+
