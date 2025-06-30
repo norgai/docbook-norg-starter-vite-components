@@ -37,13 +37,16 @@ export default function Layout() {
               <Link to="/" className={isActive('/')}>
                 Home
               </Link>
+              <Link to="/components" className={isActive('/components')}>
+                Components
+              </Link>
               <div className="relative">
                 <button
                   onClick={toggleComponentsDropdown}
                   className="flex items-center text-gray-600 hover:text-indigo-600 focus:outline-none"
                   aria-expanded={isComponentsOpen}
                 >
-                  Components
+                  Examples
                   <svg
                     className={`ml-1 h-5 w-5 transition-transform ${isComponentsOpen ? 'rotate-180' : ''}`}
                     xmlns="http://www.w3.org/2000/svg"
