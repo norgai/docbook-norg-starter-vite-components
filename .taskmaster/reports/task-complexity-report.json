@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2025-06-30T03:17:26.845Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "Enhanced Component Display System",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Break down this task into implementing metadata structure, search/filter UI, detailed component views, categorization system, and responsive navigation with React Router",
+			"reasoning": "Medium-high complexity due to multiple UI components, state management, routing, and responsive design requirements but builds on existing showcase"
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "Chat Interface UI Implementation",
+			"complexityScore": 5,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "Split into chat UI components (message bubbles, input area), message history persistence, conversation flow management, and TypeScript interface definitions",
+			"reasoning": "Medium complexity with standard chat UI patterns, React hooks usage, and local storage integration"
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "Backend API Server Setup",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Divide into Express.js setup, RESTful endpoints, authentication middleware, WebSocket implementation, request queueing system, and error handling/logging",
+			"reasoning": "High complexity involving multiple backend technologies, WebSocket integration, queue management, and proper security considerations"
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "Claude Code CLI Integration Wrapper",
+			"complexityScore": 9,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Break into CLI wrapper service, authentication layer, input validation, sandboxing/isolation, rollback mechanisms, audit logging, and security testing",
+			"reasoning": "Very high complexity due to security requirements, CLI process management, sandboxing techniques, and critical audit/rollback functionality"
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "N8N Workflow Development",
+			"complexionScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Split into N8N server setup, webhook configuration, text processing nodes, conditional logic implementation, and Claude API integration with error handling",
+			"reasoning": "Medium-high complexity with workflow automation, API integrations, and conditional logic but leverages N8N's visual interface"
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "Real-time Component Updates System",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Divide into WebSocket implementation, file watchers setup, HMR integration, progress indicators, concurrent request handling, and connection management",
+			"reasoning": "High complexity involving real-time systems, file watching, HMR integration, concurrency management, and WebSocket stability"
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "Component Version Management System",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Break into git versioning system, database schema design, history UI components, rollback functionality, branching support, and version comparison interface",
+			"reasoning": "High complexity with git integration, database design, UI for version management, and proper rollback mechanisms"
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "Image Upload and Processing Integration",
+			"complexityScore": 7,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "Split into file upload implementation, image processing pipeline, vision API integration, preview/annotation features, secure file storage, and format support",
+			"reasoning": "High complexity involving file handling, image processing, AI vision integration, and secure storage considerations"
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "AI Knowledge System Integration",
+			"complexityScore": 6,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "Divide into prompt management system, context management, multi-step workflow implementation, consistency checking, and conversation memory storage",
+			"reasoning": "Medium-high complexity with AI prompt engineering, context management, workflow state tracking, and memory persistence"
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "Component Export and Collaboration Features",
+			"complexityScore": 8,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "Break into export functionality, user authentication system, collaborative editing features, sharing capabilities, template creation, npm integration, and dependency tracking",
+			"reasoning": "High complexity involving multiple systems: export generation, authentication, real-time collaboration, sharing mechanisms, and package management integration"
+		}
+	]
+}

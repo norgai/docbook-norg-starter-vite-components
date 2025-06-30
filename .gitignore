@@ -28,3 +28,15 @@ pnpm-lock.yaml
 repomix-output.xml
 repomix-base.prompt
 repomix.config.json
+
+dev-debug.log
+# Dependency directories
+node_modules/
+# Environment variables
+.env
+.vscode
+# OS specific
+
+# Task files
+tasks.json
+tasks/ 
