@@ -1,0 +1,407 @@
+{
+  "name": "Component AI Chat - Main Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "chat",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "http://localhost:5173,http://localhost:3000",
+          "rawBody": false
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "component-chat-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "validation-1",
+              "leftValue": "={{ $json.componentId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            },
+            {
+              "id": "validation-2", 
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            },
+            {
+              "id": "validation-3",
+              "leftValue": "={{ $json.conversationId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "input-validation",
+      "name": "Input Validation",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "success": false,
+          "error": "Missing required fields: componentId, message, or conversationId",
+          "type": "error"
+        },
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "validation-error",
+      "name": "Validation Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [460, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Analyze the user message to determine modification type\nconst message = $input.first().json.message.toLowerCase();\nconst messageType = $input.first().json.messageType || 'text';\n\n// Determine request type based on keywords\nlet requestType = 'general';\nlet priority = 'medium';\nlet confidence = 0.5;\n\n// Styling modifications\nif (message.includes('color') || message.includes('style') || message.includes('css') || \n    message.includes('background') || message.includes('font') || message.includes('size')) {\n  requestType = 'styling';\n  confidence = 0.8;\n}\n// Functionality modifications\nelse if (message.includes('click') || message.includes('function') || message.includes('event') ||\n         message.includes('behavior') || message.includes('action') || message.includes('handler')) {\n  requestType = 'functionality';\n  confidence = 0.9;\n  priority = 'high';\n}\n// Structure modifications\nelse if (message.includes('layout') || message.includes('structure') || message.includes('position') ||\n         message.includes('grid') || message.includes('flex') || message.includes('component')) {\n  requestType = 'structure';\n  confidence = 0.7;\n  priority = 'high';\n}\n// Props modifications\nelse if (message.includes('props') || message.includes('property') || message.includes('attribute') ||\n         message.includes('parameter') || message.includes('config')) {\n  requestType = 'props';\n  confidence = 0.8;\n}\n\n// Return enriched data\nreturn {\n  ...($input.first().json),\n  analysis: {\n    requestType,\n    priority,\n    confidence,\n    messageLength: message.length,\n    complexity: message.length > 100 ? 'high' : message.length > 50 ? 'medium' : 'low'\n  },\n  timestamp: new Date().toISOString(),\n  processedBy: 'n8n-analyzer'\n};"
+      },
+      "id": "request-analyzer",
+      "name": "Request Type Analyzer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "create",
+        "modelId": "claude-3-sonnet-20240229",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are an expert React/TypeScript developer helping to modify components based on user requests. You have access to Claude Code CLI to make actual file changes.\n\nYour task:\n1. Analyze the user's request for component modifications\n2. Generate the appropriate Claude Code CLI command\n3. Provide a clear response about what changes will be made\n\nComponent Context:\n- Framework: {{ $json.context.framework || 'react' }}\n- Language: {{ $json.context.language || 'typescript' }}\n- Component ID: {{ $json.componentId }}\n- Request Type: {{ $json.analysis.requestType }}\n- Priority: {{ $json.analysis.priority }}\n\nGuidelines:\n- Be specific about what changes you'll make\n- Consider component best practices\n- Ensure type safety for TypeScript\n- Follow React conventions\n- Provide clear explanations\n\nRespond with a JSON object containing:\n- content: Your explanation of the changes\n- command: The Claude Code CLI command to execute\n- type: 'text', 'code', or 'error'\n- confidence: Your confidence level (0-1)"
+            },
+            {
+              "role": "user", 
+              "content": "Component: {{ $json.componentId }}\nRequest: {{ $json.message }}\nType: {{ $json.analysis.requestType }}\nComplexity: {{ $json.analysis.complexity }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 0.3
+        }
+      },
+      "id": "claude-processor",
+      "name": "Claude AI Processor",
+      "type": "n8n-nodes-base.anthropic",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "anthropic-credentials",
+          "name": "Claude API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude's response and extract command\nconst claudeResponse = $input.first().json.content;\nlet parsedResponse;\n\ntry {\n  // Try to parse as JSON first\n  if (claudeResponse.includes('{') && claudeResponse.includes('}')) {\n    const jsonMatch = claudeResponse.match(/\\{[\\s\\S]*\\}/);\n    if (jsonMatch) {\n      parsedResponse = JSON.parse(jsonMatch[0]);\n    }\n  }\n  \n  // Fallback to text parsing\n  if (!parsedResponse) {\n    parsedResponse = {\n      content: claudeResponse,\n      command: null,\n      type: 'text',\n      confidence: 0.7\n    };\n    \n    // Extract potential command from response\n    const commandMatch = claudeResponse.match(/claude-code[^\\n]*/i);\n    if (commandMatch) {\n      parsedResponse.command = commandMatch[0];\n      parsedResponse.type = 'code';\n    }\n  }\n  \n} catch (error) {\n  parsedResponse = {\n    content: 'I apologize, but I had trouble processing your request. Please try rephrasing it.',\n    command: null,\n    type: 'error',\n    confidence: 0,\n    error: error.message\n  };\n}\n\n// Return enriched data\nreturn {\n  original: $input.first().json,\n  claude: parsedResponse,\n  shouldExecute: parsedResponse.command !== null && parsedResponse.type !== 'error',\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "response-parser",
+      "name": "Response Parser",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "should-execute",
+              "leftValue": "={{ $json.shouldExecute }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            },
+            {
+              "id": "has-command",
+              "leftValue": "={{ $json.claude.command }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "execution-gate",
+      "name": "Should Execute Code?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "command": "={{ $json.claude.command }}",
+        "options": {
+          "cwd": "/path/to/your/component/repository",
+          "timeout": 30000
+        }
+      },
+      "id": "claude-code-executor",
+      "name": "Execute Claude Code",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format the final response for the frontend\nconst originalRequest = $input.first().json.original || $input.first().json;\nconst claudeResponse = $input.first().json.claude;\nconst executionResult = $input.first().json.stdout || null;\nconst executionError = $input.first().json.stderr || null;\n\n// Determine success status\nconst success = !executionError && claudeResponse.type !== 'error';\n\n// Format code changes if execution was successful\nlet codeChanges = [];\nif (success && executionResult) {\n  // Try to parse execution result for file changes\n  try {\n    const changes = JSON.parse(executionResult);\n    if (Array.isArray(changes)) {\n      codeChanges = changes;\n    }\n  } catch (e) {\n    // If parsing fails, create a generic change entry\n    codeChanges = [{\n      file: `src/components/${originalRequest.componentId}.tsx`,\n      description: claudeResponse.content,\n      content: 'Changes applied via Claude Code CLI'\n    }];\n  }\n}\n\n// Create the response\nconst response = {\n  success,\n  content: claudeResponse.content,\n  type: claudeResponse.type,\n  codeChanges,\n  metadata: {\n    requestType: originalRequest.analysis?.requestType,\n    confidence: claudeResponse.confidence,\n    executedCommand: claudeResponse.command,\n    executionTime: new Date().toISOString(),\n    componentId: originalRequest.componentId,\n    conversationId: originalRequest.conversationId\n  }\n};\n\n// Add error details if execution failed\nif (executionError) {\n  response.error = executionError;\n  response.success = false;\n  response.content = 'I encountered an error while applying the changes. Please try again or rephrase your request.';\n}\n\nreturn response;"
+      },
+      "id": "response-formatter",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin", 
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "success-response",
+      "name": "Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "success": false,
+          "content": "I can provide guidance on this change, but won't execute code modifications directly. Here's what I suggest: {{ $json.claude.content }}",
+          "type": "text",
+          "codeChanges": [],
+          "metadata": {
+            "requestType": "={{ $json.original.analysis.requestType }}",
+            "confidence": "={{ $json.claude.confidence }}",
+            "reason": "Code execution skipped for safety"
+          }
+        },
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "guidance-response",
+      "name": "Guidance Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 480]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "url": "http://localhost:5678/webhook/error-handler",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": {
+          "error": "={{ $json.error }}",
+          "originalRequest": "={{ $json.original }}",
+          "timestamp": "={{ new Date().toISOString() }}",
+          "workflowName": "component-chat-main"
+        },
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "error-handler",
+      "name": "Error Handler",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1340, 600]
+    }
+  ],
+  "connections": {
+    "Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "Input Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Validation": {
+      "main": [
+        [
+          {
+            "node": "Request Type Analyzer",
+            "type": "main", 
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Type Analyzer": {
+      "main": [
+        [
+          {
+            "node": "Claude AI Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude AI Processor": {
+      "main": [
+        [
+          {
+            "node": "Response Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Parser": {
+      "main": [
+        [
+          {
+            "node": "Should Execute Code?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Execute Code?": {
+      "main": [
+        [
+          {
+            "node": "Execute Claude Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guidance Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Claude Code": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "error-handling-workflow"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "1",
+      "name": "component-ai"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,317 @@
+{
+  "name": "Component AI Chat - Code Validation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "validate-code",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "validation-webhook",
+      "name": "Code Validation Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract and prepare code for validation\nconst codeChanges = $input.first().json.codeChanges || [];\nconst componentId = $input.first().json.componentId;\nconst projectPath = $input.first().json.projectPath || '/path/to/project';\n\n// Create validation tasks\nconst validationTasks = codeChanges.map((change, index) => ({\n  id: `validation-${index}`,\n  file: change.file,\n  content: change.content,\n  description: change.description,\n  type: change.file.endsWith('.tsx') ? 'typescript-react' : \n        change.file.endsWith('.ts') ? 'typescript' :\n        change.file.endsWith('.jsx') ? 'javascript-react' : 'javascript'\n}));\n\nreturn {\n  componentId,\n  projectPath,\n  validationTasks,\n  totalTasks: validationTasks.length,\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "prepare-validation",
+      "name": "Prepare Validation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "validation-splitter",
+      "name": "Split Validation Tasks",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "npx tsc --noEmit --strict {{ $json.file }}",
+        "options": {
+          "cwd": "={{ $json.projectPath }}",
+          "timeout": 10000
+        }
+      },
+      "id": "typescript-check",
+      "name": "TypeScript Check",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 260]
+    },
+    {
+      "parameters": {
+        "command": "npx eslint {{ $json.file }} --format json",
+        "options": {
+          "cwd": "={{ $json.projectPath }}",
+          "timeout": 10000
+        }
+      },
+      "id": "eslint-check",
+      "name": "ESLint Check",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 340]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse validation results\nconst file = $input.first().json.file;\nconst typescriptResult = $input.first().json.typescript || {};\nconst eslintResult = $input.first().json.eslint || {};\n\n// TypeScript validation\nconst typescriptValid = typescriptResult.exitCode === 0;\nconst typescriptErrors = typescriptValid ? [] : (typescriptResult.stderr || '').split('\\n').filter(line => line.trim());\n\n// ESLint validation\nlet eslintValid = true;\nlet eslintErrors = [];\nlet eslintWarnings = [];\n\ntry {\n  if (eslintResult.stdout) {\n    const eslintData = JSON.parse(eslintResult.stdout);\n    if (Array.isArray(eslintData) && eslintData.length > 0) {\n      const fileResult = eslintData[0];\n      eslintErrors = fileResult.messages.filter(msg => msg.severity === 2);\n      eslintWarnings = fileResult.messages.filter(msg => msg.severity === 1);\n      eslintValid = eslintErrors.length === 0;\n    }\n  }\n} catch (e) {\n  eslintValid = false;\n  eslintErrors = ['Failed to parse ESLint output'];\n}\n\n// Overall validation status\nconst isValid = typescriptValid && eslintValid;\nconst hasWarnings = eslintWarnings.length > 0;\n\nreturn {\n  file,\n  validation: {\n    isValid,\n    hasWarnings,\n    typescript: {\n      valid: typescriptValid,\n      errors: typescriptErrors\n    },\n    eslint: {\n      valid: eslintValid,\n      errors: eslintErrors,\n      warnings: eslintWarnings\n    }\n  },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "parse-validation",
+      "name": "Parse Validation Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "all-valid",
+              "leftValue": "={{ $json.validation.isValid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "validation-gate",
+      "name": "All Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "command": "npm test -- --testPathPattern={{ $json.componentId }} --passWithNoTests",
+        "options": {
+          "cwd": "={{ $json.projectPath }}",
+          "timeout": 30000
+        }
+      },
+      "id": "run-tests",
+      "name": "Run Component Tests",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate all validation results\nconst allResults = $input.all();\nconst componentId = allResults[0].json.componentId;\n\n// Collect validation results\nconst fileResults = allResults.map(item => item.json);\nconst allValid = fileResults.every(result => result.validation.isValid);\nconst hasWarnings = fileResults.some(result => result.validation.hasWarnings);\n\n// Count errors and warnings\nconst totalErrors = fileResults.reduce((sum, result) => {\n  return sum + \n    result.validation.typescript.errors.length + \n    result.validation.eslint.errors.length;\n}, 0);\n\nconst totalWarnings = fileResults.reduce((sum, result) => {\n  return sum + result.validation.eslint.warnings.length;\n}, 0);\n\n// Test results\nconst testsPassed = allResults[0].json.tests?.exitCode === 0;\n\n// Final validation status\nconst finalValid = allValid && (testsPassed !== false); // Allow tests to be skipped\n\nreturn {\n  componentId,\n  validation: {\n    overall: {\n      valid: finalValid,\n      hasWarnings,\n      totalErrors,\n      totalWarnings,\n      filesChecked: fileResults.length,\n      testsPassed\n    },\n    files: fileResults.map(result => ({\n      file: result.file,\n      valid: result.validation.isValid,\n      errors: result.validation.typescript.errors.concat(result.validation.eslint.errors),\n      warnings: result.validation.eslint.warnings\n    })),\n    recommendation: finalValid ? \n      'Code changes are valid and safe to apply' :\n      'Code changes have validation errors and should be reviewed'\n  },\n  timestamp: new Date().toISOString()\n};"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "validation-response",
+      "name": "Validation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2000, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": {
+          "valid": false,
+          "errors": "={{ $json.validation.typescript.errors.concat($json.validation.eslint.errors) }}",
+          "file": "={{ $json.file }}",
+          "message": "Code validation failed. Please review the errors and try again."
+        },
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "validation-error",
+      "name": "Validation Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1340, 480]
+    }
+  ],
+  "connections": {
+    "Code Validation Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Validation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Validation": {
+      "main": [
+        [
+          {
+            "node": "Split Validation Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Validation Tasks": {
+      "main": [
+        [
+          {
+            "node": "TypeScript Check",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ESLint Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TypeScript Check": {
+      "main": [
+        [
+          {
+            "node": "Parse Validation Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ESLint Check": {
+      "main": [
+        [
+          {
+            "node": "Parse Validation Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Validation Results": {
+      "main": [
+        [
+          {
+            "node": "All Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Valid?": {
+      "main": [
+        [
+          {
+            "node": "Run Component Tests",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Validation Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Component Tests": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Validation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "3",
+      "name": "code-validation"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

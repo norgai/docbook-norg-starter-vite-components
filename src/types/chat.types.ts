@@ -10,22 +10,26 @@ export interface ChatMessage {
   status?: MessageStatus;
 }
 
-export enum MessageType {
-  TEXT = 'text',
-  CODE = 'code',
-  IMAGE = 'image',
-  COMPONENT = 'component',
-  ERROR = 'error',
-  SYSTEM = 'system'
-}
+export const MessageType = {
+  TEXT: 'text',
+  CODE: 'code',
+  IMAGE: 'image',
+  COMPONENT: 'component',
+  ERROR: 'error',
+  SYSTEM: 'system'
+} as const;
 
-export enum MessageStatus {
-  SENDING = 'sending',
-  SENT = 'sent',
-  RECEIVED = 'received',
-  ERROR = 'error',
-  PROCESSING = 'processing'
-}
+export type MessageType = typeof MessageType[keyof typeof MessageType];
+
+export const MessageStatus = {
+  SENDING: 'sending',
+  SENT: 'sent',
+  RECEIVED: 'received',
+  ERROR: 'error',
+  PROCESSING: 'processing'
+} as const;
+
+export type MessageStatus = typeof MessageStatus[keyof typeof MessageStatus];
 
 export interface MessageMetadata {
   componentId?: string;

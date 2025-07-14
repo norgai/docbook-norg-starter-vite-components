@@ -151,6 +151,9 @@ export function ChatInterface({
             <h3 className="font-semibold text-gray-900">
               {componentId ? `Chat with ${componentId}` : 'AI Assistant'}
             </h3>
+            <span className="text-xs text-gray-500">
+              {isConnected ? '• N8N Connected' : '• N8N Disconnected'}
+            </span>
           </div>
           {isTyping && (
             <div className="text-sm text-gray-500">AI is typing...</div>

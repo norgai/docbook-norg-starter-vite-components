@@ -1,0 +1,268 @@
+{
+  "name": "Component AI Chat - Error Handling",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "error-handler",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "error-webhook",
+      "name": "Error Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Classify and analyze the error\nconst error = $input.first().json.error;\nconst originalRequest = $input.first().json.originalRequest;\nconst timestamp = $input.first().json.timestamp;\n\n// Error classification\nlet errorType = 'unknown';\nlet severity = 'medium';\nlet retryable = false;\nlet userMessage = 'An unexpected error occurred. Please try again.';\nlet shouldRetry = false;\nlet retryDelay = 0;\n\n// Analyze error message/type\nif (typeof error === 'string') {\n  const errorLower = error.toLowerCase();\n  \n  // Network/timeout errors\n  if (errorLower.includes('timeout') || errorLower.includes('network') || errorLower.includes('connection')) {\n    errorType = 'network';\n    severity = 'low';\n    retryable = true;\n    shouldRetry = true;\n    retryDelay = 2000;\n    userMessage = 'Network timeout occurred. Retrying your request...';\n  }\n  // API errors\n  else if (errorLower.includes('api') || errorLower.includes('rate limit') || errorLower.includes('quota')) {\n    errorType = 'api';\n    severity = 'medium';\n    retryable = true;\n    shouldRetry = true;\n    retryDelay = 5000;\n    userMessage = 'API limit reached. Retrying in a moment...';\n  }\n  // Claude Code CLI errors\n  else if (errorLower.includes('claude-code') || errorLower.includes('command not found')) {\n    errorType = 'cli';\n    severity = 'high';\n    retryable = false;\n    userMessage = 'Code modification service is currently unavailable. Please try again later.';\n  }\n  // File system errors\n  else if (errorLower.includes('permission') || errorLower.includes('access') || errorLower.includes('file')) {\n    errorType = 'filesystem';\n    severity = 'high';\n    retryable = false;\n    userMessage = 'Unable to access project files. Please check permissions.';\n  }\n  // Validation errors\n  else if (errorLower.includes('validation') || errorLower.includes('invalid')) {\n    errorType = 'validation';\n    severity = 'low';\n    retryable = false;\n    userMessage = 'Invalid request format. Please check your input and try again.';\n  }\n  // Claude API specific errors\n  else if (errorLower.includes('anthropic') || errorLower.includes('claude')) {\n    errorType = 'claude';\n    severity = 'medium';\n    retryable = true;\n    shouldRetry = true;\n    retryDelay = 3000;\n    userMessage = 'AI service temporarily unavailable. Retrying...';\n  }\n}\n\n// Get retry count from original request\nconst currentRetries = originalRequest?.retryCount || 0;\nconst maxRetries = 3;\n\n// Don't retry if max attempts reached\nif (currentRetries >= maxRetries) {\n  shouldRetry = false;\n  userMessage = 'Multiple attempts failed. Please try a different request or contact support.';\n}\n\nreturn {\n  error: {\n    type: errorType,\n    severity,\n    retryable,\n    shouldRetry,\n    retryDelay,\n    retryCount: currentRetries,\n    maxRetries,\n    originalError: error,\n    timestamp\n  },\n  response: {\n    success: false,\n    content: userMessage,\n    type: 'error',\n    codeChanges: [],\n    metadata: {\n      errorType,\n      severity,\n      retryAttempt: currentRetries + 1,\n      totalAttempts: maxRetries\n    }\n  },\n  originalRequest: {\n    ...originalRequest,\n    retryCount: currentRetries + 1\n  }\n};"
+      },
+      "id": "error-classifier",
+      "name": "Error Classifier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "should-retry",
+              "leftValue": "={{ $json.error.shouldRetry }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "retry-gate",
+      "name": "Should Retry?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.error.retryDelay }}",
+        "unit": "ms"
+      },
+      "id": "retry-delay",
+      "name": "Retry Delay",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "url": "http://localhost:5678/webhook/chat",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.originalRequest }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "retry-request",
+      "name": "Retry Original Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.response }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "error-response",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [680, 480]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Log error details for monitoring and debugging\nconst logEntry = {\n  timestamp: new Date().toISOString(),\n  level: 'error',\n  service: 'component-ai-chat',\n  workflow: 'error-handling',\n  error: $input.first().json.error,\n  originalRequest: $input.first().json.originalRequest,\n  userAgent: $input.first().json.originalRequest?.headers?.['user-agent'],\n  ipAddress: $input.first().json.originalRequest?.headers?.['x-forwarded-for'],\n  sessionId: $input.first().json.originalRequest?.conversationId\n};\n\n// Add additional context based on error type\nif ($input.first().json.error.type === 'api') {\n  logEntry.apiDetails = {\n    endpoint: 'anthropic',\n    retryCount: $input.first().json.error.retryCount,\n    rateLimitHit: $input.first().json.error.originalError.includes('rate limit')\n  };\n}\n\nif ($input.first().json.error.type === 'cli') {\n  logEntry.cliDetails = {\n    command: $input.first().json.originalRequest?.analysis?.requestType,\n    componentId: $input.first().json.originalRequest?.componentId,\n    errorOutput: $input.first().json.error.originalError\n  };\n}\n\nconsole.log('ERROR_LOG:', JSON.stringify(logEntry, null, 2));\n\nreturn logEntry;"
+      },
+      "id": "error-logger",
+      "name": "Error Logger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "is-high-severity",
+              "leftValue": "={{ $json.error.severity }}",
+              "rightValue": "high",
+              "operator": {
+                "type": "string",
+                "operation": "equal"
+              }
+            }
+          ]
+        }
+      },
+      "id": "alert-gate",
+      "name": "High Severity?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1120, 480]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "url": "http://localhost:5678/webhook/alert",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": {
+          "alert": "HIGH_SEVERITY_ERROR",
+          "message": "Critical error in Component AI Chat workflow",
+          "details": "={{ $json }}",
+          "timestamp": "={{ new Date().toISOString() }}",
+          "severity": "critical"
+        },
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "send-alert",
+      "name": "Send Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1340, 480]
+    }
+  ],
+  "connections": {
+    "Error Webhook": {
+      "main": [
+        [
+          {
+            "node": "Error Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Classifier": {
+      "main": [
+        [
+          {
+            "node": "Should Retry?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Retry?": {
+      "main": [
+        [
+          {
+            "node": "Retry Delay",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Error Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retry Delay": {
+      "main": [
+        [
+          {
+            "node": "Retry Original Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Logger": {
+      "main": [
+        [
+          {
+            "node": "High Severity?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "High Severity?": {
+      "main": [
+        [
+          {
+            "node": "Send Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {},
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "error-handling"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "versionId": "1"
+}

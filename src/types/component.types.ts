@@ -29,12 +29,14 @@ export interface ComponentCategory {
   order?: number;
 }
 
-export enum ComponentStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  DEPRECATED = 'deprecated',
-  ARCHIVED = 'archived'
-}
+export const ComponentStatus = {
+  DRAFT: 'draft',
+  ACTIVE: 'active',
+  DEPRECATED: 'deprecated',
+  ARCHIVED: 'archived'
+} as const;
+
+export type ComponentStatus = typeof ComponentStatus[keyof typeof ComponentStatus];
 
 export interface ComponentUsage {
   examples: UsageExample[];
@@ -120,13 +122,15 @@ export interface ComponentModification {
   aiGenerated: boolean;
 }
 
-export enum ModificationType {
-  STYLE = 'style',
-  FUNCTIONALITY = 'functionality',
-  STRUCTURE = 'structure',
-  PROPS = 'props',
-  DOCUMENTATION = 'documentation'
-}
+export const ModificationType = {
+  STYLE: 'style',
+  FUNCTIONALITY: 'functionality',
+  STRUCTURE: 'structure',
+  PROPS: 'props',
+  DOCUMENTATION: 'documentation'
+} as const;
+
+export type ModificationType = typeof ModificationType[keyof typeof ModificationType];
 
 export interface ComponentChange {
   path: string;
