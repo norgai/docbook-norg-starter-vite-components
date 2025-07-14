@@ -38,6 +38,8 @@ export interface MessageMetadata {
   imageUrl?: string;
   codeLanguage?: string;
   errorDetails?: string;
+  codeChanges?: any[];
+  n8nResponse?: boolean;
 }
 
 export interface ComponentChangePreview {
@@ -57,11 +59,13 @@ export interface ChatConversation {
   status: ConversationStatus;
 }
 
-export enum ConversationStatus {
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  ARCHIVED = 'archived'
-}
+export const ConversationStatus = {
+  ACTIVE: 'active',
+  COMPLETED: 'completed',
+  ARCHIVED: 'archived'
+} as const;
+
+export type ConversationStatus = typeof ConversationStatus[keyof typeof ConversationStatus];
 
 export interface ChatState {
   conversations: Map<string, ChatConversation>;

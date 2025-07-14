@@ -25,7 +25,7 @@ class RollbackService {
   async rollbackToVersion(
     componentId: string,
     targetVersion: ComponentVersion,
-    options: RollbackOptions = {}
+    options: Partial<RollbackOptions> = {}
   ): Promise<RollbackResult> {
     try {
       console.log(`Starting rollback for ${componentId} to version ${targetVersion.version}`);
@@ -93,7 +93,7 @@ class RollbackService {
       console.error('Rollback failed:', error);
       return {
         success: false,
-        fromVersion: options.targetVersion,
+        fromVersion: options.targetVersion || 'unknown',
         toVersion: targetVersion.version,
         filesChanged: [],
         warnings: [],
@@ -133,8 +133,8 @@ class RollbackService {
 
       // Check for version conflicts
       const versionDiff = await this.compareVersions(fromVersion, toVersion);
-      if (versionDiff.conflicts.length > 0) {
-        conflicts.push(...versionDiff.conflicts.map(c => c.description));
+      if (versionDiff.conflicts && versionDiff.conflicts.length > 0) {
+        conflicts.push(...versionDiff.conflicts.map((c: any) => c.description || 'Unknown conflict'));
       }
 
       // Check for dependency changes
@@ -293,7 +293,7 @@ class RollbackService {
 
   // Compare versions to identify conflicts
   private async compareVersions(
-    fromVersion: ComponentVersion,
+    _fromVersion: ComponentVersion,
     toVersion: ComponentVersion
   ) {
     // Mock comparison for demo - would integrate with actual diff logic
@@ -305,8 +305,8 @@ class RollbackService {
 
   // Check for dependency changes between versions
   private async checkDependencyChanges(
-    fromVersion: ComponentVersion,
-    toVersion: ComponentVersion
+    _fromVersion: ComponentVersion,
+    _toVersion: ComponentVersion
   ): Promise<string[]> {
     // Mock dependency checking - would integrate with package.json analysis
     const changes = ['react updated from 18.0.0 to 18.2.0'];
@@ -350,7 +350,7 @@ class RollbackService {
   }
 
   // Get component dependencies
-  private async getComponentDependencies(componentId: string): Promise<string[]> {
+  private async getComponentDependencies(_componentId: string): Promise<string[]> {
     // Mock dependencies - would read from package.json and imports
     return ['react', 'typescript', '@types/react'];
   }
@@ -429,8 +429,8 @@ class RollbackService {
 
   // Validate state after rollback
   private async validatePostRollback(
-    componentId: string,
-    targetVersion: ComponentVersion
+    _componentId: string,
+    _targetVersion: ComponentVersion
   ): Promise<{ valid: boolean; warnings: string[] }> {
     const warnings: string[] = [];
 

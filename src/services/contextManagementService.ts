@@ -603,7 +603,7 @@ class ContextManagementService {
   }
 
   private async archiveToLongTerm(
-    context: ConversationContext, 
+    _context: ConversationContext, 
     message: ContextMessage
   ): Promise<void> {
     // Archive important information to long-term memory

@@ -5,7 +5,7 @@ import { useChatHistory } from './useChatHistory';
 import { n8nService } from '../services/n8nService';
 import type { N8NChatRequest } from '../services/n8nService';
 import { concurrentRequestManager } from '../services/concurrentRequestManager';
-import { websocketService } from '../services/websocketService';
+// import { websocketService } from '../services/websocketService';
 
 interface ChatFlowState {
   isTyping: boolean;

@@ -978,7 +978,7 @@ class TemplateService {
     return `// ${componentName} component implementation`;
   }
 
-  private generateExports(template: ComponentTemplate, config: TemplateGenerationConfig): string {
+  private generateExports(_template: ComponentTemplate, config: TemplateGenerationConfig): string {
     return `export default ${config.componentName};\nexport { ${config.componentName} };`;
   }
 

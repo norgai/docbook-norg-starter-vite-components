@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { ChatConversation, ChatMessage } from '../types/chat.types';
+import type { ChatConversation, ChatMessage } from '../types/chat.types';
 import { chatStorageService } from '../services/chatStorage.service';
 
 export function useChatHistory(componentId?: string) {

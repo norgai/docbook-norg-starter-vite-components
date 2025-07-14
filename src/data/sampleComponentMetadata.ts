@@ -1,4 +1,5 @@
-import { ComponentMetadata, ComponentStatus } from '../types/component.types';
+import type { ComponentMetadata } from '../types/component.types';
+import { ComponentStatus } from '../types/component.types';
 import { defaultCategories } from '../services/componentMetadata.service';
 
 // Sample metadata for existing components

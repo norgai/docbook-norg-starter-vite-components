@@ -115,7 +115,7 @@ class ExportService {
 
   // Export component
   async exportComponent(
-    componentId: string,
+    _componentId: string,
     componentData: any,
     config: ExportConfiguration
   ): Promise<ExportResult> {
@@ -126,7 +126,8 @@ class ExportService {
       throw new Error(`Unsupported export format: ${config.format}`);
     }
 
-    const startTime = Date.now();
+    // Track export start time (not used currently)
+    Date.now();
     const files: ExportedFile[] = [];
     const warnings: string[] = [];
     const errors: string[] = [];
@@ -222,7 +223,7 @@ class ExportService {
     format: ExportFormat,
     config: ExportConfiguration
   ): Promise<ExportedFile> {
-    const { framework, language, name, code, dependencies } = componentData;
+    const { name, code, dependencies } = componentData;
     let content = code;
 
     // Apply format-specific transformations
@@ -278,7 +279,7 @@ class ExportService {
     if (props && props.length > 0 && !code.includes('interface') && !code.includes('type')) {
       propsInterface = `
 interface ${name}Props {
-${props.map(prop => `  ${prop.name}${prop.required ? '' : '?'}: ${prop.type};`).join('\n')}
+${props.map((prop: any) => `  ${prop.name}${prop.required ? '' : '?'}: ${prop.type};`).join('\n')}
 }
 
 `;
@@ -325,12 +326,12 @@ ${cleanCode}`;
   // Generate Vue TypeScript component
   private async generateVueTypeScriptComponent(
     componentData: any,
-    config: ExportConfiguration
+    _config: ExportConfiguration
   ): Promise<string> {
-    const { name, props, code } = componentData;
+    const { name, props } = componentData;
     
     // Convert React component to Vue structure
-    const vueProps = props?.map(prop => ({
+    const vueProps = props?.map((prop: any) => ({
       name: prop.name,
       type: this.mapTypeScriptToVue(prop.type),
       required: prop.required
@@ -344,7 +345,7 @@ ${cleanCode}`;
 
 <script setup lang="ts">
 interface Props {
-${vueProps.map(prop => `  ${prop.name}${prop.required ? '' : '?'}: ${prop.type};`).join('\n')}
+${vueProps.map((prop: any) => `  ${prop.name}${prop.required ? '' : '?'}: ${prop.type};`).join('\n')}
 }
 
 const props = defineProps<Props>();
@@ -358,11 +359,11 @@ const props = defineProps<Props>();
   // Generate Vue JavaScript component
   private async generateVueJavaScriptComponent(
     componentData: any,
-    config: ExportConfiguration
+    _config: ExportConfiguration
   ): Promise<string> {
     const { name, props } = componentData;
     
-    const vueProps = props?.reduce((acc, prop) => {
+    const vueProps = props?.reduce((acc: any, prop: any) => {
       acc[prop.name] = {
         type: this.mapTypeToVueJS(prop.type),
         required: prop.required
@@ -391,7 +392,7 @@ export default {
   // Generate generic component
   private async generateGenericComponent(
     componentData: any,
-    config: ExportConfiguration
+    _config: ExportConfiguration
   ): Promise<string> {
     return componentData.code;
   }
@@ -399,8 +400,8 @@ export default {
   // Generate types file
   private async generateTypesFile(
     componentData: any,
-    format: ExportFormat,
-    config: ExportConfiguration
+    _format: ExportFormat,
+    _config: ExportConfiguration
   ): Promise<ExportedFile | null> {
     if (!componentData.props || componentData.props.length === 0) {
       return null;
@@ -411,7 +412,7 @@ export default {
     const content = `// Type definitions for ${name}
 
 export interface ${name}Props {
-${props.map(prop => {
+${props.map((prop: any) => {
   const optional = prop.required ? '' : '?';
   return `  /** ${prop.description || 'No description'} */
   ${prop.name}${optional}: ${prop.type};`;
@@ -435,7 +436,7 @@ export default ${name}Props;
   // Generate styles file
   private async generateStylesFile(
     componentData: any,
-    format: ExportFormat,
+    _format: ExportFormat,
     config: ExportConfiguration
   ): Promise<ExportedFile | null> {
     if (!componentData.styles) return null;
@@ -448,7 +449,7 @@ export default ${name}Props;
     // Add CSS module wrapper if requested
     if (config.options.useCSSModules) {
       content = `.${name.toLowerCase()} {
-${content.split('\n').map(line => `  ${line}`).join('\n')}
+${content.split('\n').map((line: string) => `  ${line}`).join('\n')}
 }`;
     }
 
@@ -466,8 +467,8 @@ ${content.split('\n').map(line => `  ${line}`).join('\n')}
   // Generate test file
   private async generateTestFile(
     componentData: any,
-    format: ExportFormat,
-    config: ExportConfiguration
+    _format: ExportFormat,
+    _config: ExportConfiguration
   ): Promise<ExportedFile | null> {
     const { name, framework } = componentData;
     
@@ -523,8 +524,8 @@ describe('${name}', () => {
   // Generate Storybook story file
   private async generateStoryFile(
     componentData: any,
-    format: ExportFormat,
-    config: ExportConfiguration
+    _format: ExportFormat,
+    _config: ExportConfiguration
   ): Promise<ExportedFile | null> {
     const { name, props, framework } = componentData;
     
@@ -543,7 +544,7 @@ const meta: Meta<typeof ${name}> = {
   },
   tags: ['autodocs'],
 ${hasProps ? `  argTypes: {
-${props.map(prop => `    ${prop.name}: {
+${props.map((prop: any) => `    ${prop.name}: {
       description: '${prop.description || 'No description'}',
       control: { type: '${this.getStorybookControlType(prop.type)}' },
     },`).join('\n')}
@@ -555,11 +556,11 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 ${hasProps ? `  args: {
-${props.filter(p => p.required).map(prop => `    ${prop.name}: ${this.getDefaultValueForType(prop.type)},`).join('\n')}
+${props.filter((p: any) => p.required).map((prop: any) => `    ${prop.name}: ${this.getDefaultValueForType(prop.type)},`).join('\n')}
   },` : ''}
 };
 
-${hasProps ? props.map(prop => `
+${hasProps ? props.map((prop: any) => `
 export const With${prop.name.charAt(0).toUpperCase() + prop.name.slice(1)}: Story = {
   args: {
     ...Default.args,
@@ -582,8 +583,8 @@ export const With${prop.name.charAt(0).toUpperCase() + prop.name.slice(1)}: Stor
   // Generate documentation file
   private async generateDocumentationFile(
     componentData: any,
-    format: ExportFormat,
-    config: ExportConfiguration
+    _format: ExportFormat,
+    _config: ExportConfiguration
   ): Promise<ExportedFile | null> {
     const { name, description, props, usage } = componentData;
     
@@ -601,12 +602,12 @@ ${props && props.length > 0 ? `## Props
 
 | Name | Type | Required | Default | Description |
 |------|------|----------|---------|-------------|
-${props.map(prop => `| ${prop.name} | \`${prop.type}\` | ${prop.required ? '✅' : '❌'} | ${prop.default || '-'} | ${prop.description || '-'} |`).join('\n')}
+${props.map((prop: any) => `| ${prop.name} | \`${prop.type}\` | ${prop.required ? '✅' : '❌'} | ${prop.default || '-'} | ${prop.description || '-'} |`).join('\n')}
 ` : ''}
 
 ## Examples
 
-${usage?.examples?.map((example, index) => `
+${usage?.examples?.map((example: any, index: number) => `
 ### ${example.title || `Example ${index + 1}`}
 
 ${example.description || ''}
@@ -618,7 +619,7 @@ ${example.code}
 
 ## Best Practices
 
-${usage?.bestPractices?.map(practice => `- ${practice}`).join('\n') || '- Follow component naming conventions\n- Use proper prop types\n- Include accessible attributes'}
+${usage?.bestPractices?.map((practice: string) => `- ${practice}`).join('\n') || '- Follow component naming conventions\n- Use proper prop types\n- Include accessible attributes'}
 `;
 
     return {
@@ -658,7 +659,7 @@ ${usage?.bestPractices?.map(practice => `- ${practice}`).join('\n') || '- Follow
       dependencies: {
         ...(framework === 'react' ? { 'react': '^18.0.0' } : {}),
         ...(framework === 'vue' ? { 'vue': '^3.0.0' } : {}),
-        ...dependencies?.reduce((acc, dep) => ({ ...acc, [dep]: 'latest' }), {})
+        ...dependencies?.reduce((acc: any, dep: any) => ({ ...acc, [dep]: 'latest' }), {})
       },
       devDependencies: {
         ...(language === 'typescript' ? { 'typescript': '^5.0.0' } : {}),
@@ -697,8 +698,8 @@ ${usage?.bestPractices?.map(practice => `- ${practice}`).join('\n') || '- Follow
   // Generate additional config files
   private async generateConfigFiles(
     componentData: any,
-    format: ExportFormat,
-    config: ExportConfiguration
+    _format: ExportFormat,
+    _config: ExportConfiguration
   ): Promise<ExportedFile[]> {
     const files: ExportedFile[] = [];
 
@@ -745,13 +746,13 @@ ${componentData.description || 'Component description'}
 ## Installation
 
 \`\`\`bash
-npm install ${config.packageMetadata?.name || `@components/${componentData.name.toLowerCase()}`}
+npm install ${_config.packageMetadata?.name || `@components/${componentData.name.toLowerCase()}`}
 \`\`\`
 
 ## Usage
 
 \`\`\`${componentData.language}
-import { ${componentData.name} } from '${config.packageMetadata?.name || `@components/${componentData.name.toLowerCase()}`}';
+import { ${componentData.name} } from '${_config.packageMetadata?.name || `@components/${componentData.name.toLowerCase()}`}';
 
 <${componentData.name} />
 \`\`\`
@@ -766,7 +767,7 @@ npm test
 
 ## License
 
-${config.packageMetadata?.license || 'MIT'}
+${_config.packageMetadata?.license || 'MIT'}
 `;
 
     files.push({

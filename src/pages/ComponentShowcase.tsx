@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useComponentMetadata, useComponentFilter } from '../hooks/useComponentMetadata';
 import { FilterBar } from '../components/filters';
 import { ComponentGrid, ComponentDetailView } from '../components/component';
-import { CategoryNavigation, Breadcrumb, TagCloud, BreadcrumbItem } from '../components/navigation';
-import { ComponentMetadata } from '../types/component.types';
+import { CategoryNavigation, Breadcrumb, TagCloud } from '../components/navigation';
+import type { BreadcrumbItem } from '../components/navigation';
+import type { ComponentMetadata } from '../types/component.types';
 
 export function ComponentShowcase() {
   const { componentId, categoryId } = useParams<{ componentId?: string; categoryId?: string }>();

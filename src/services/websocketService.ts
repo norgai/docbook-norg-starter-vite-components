@@ -27,8 +27,9 @@ class WebSocketService {
   private ws: WebSocket | null = null;
   private config: WebSocketConfig;
   private listeners: Map<string, Set<Function>> = new Map();
-  private reconnectCount = 0;
-  private maxReconnectAttempts: number;
+  // Reconnection tracking (not currently used)
+  // private reconnectCount = 0;
+  // private maxReconnectAttempts: number;
   private reconnectTimer: number | null = null;
 
   constructor(config: WebSocketConfig) {
@@ -38,14 +39,15 @@ class WebSocketService {
       timeout: 10000,
       ...config
     };
-    this.maxReconnectAttempts = this.config.reconnectAttempts!;
+    // this.maxReconnectAttempts = this.config.reconnectAttempts!;
   }
 
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
         // Use native WebSocket for now
-        const wsUrl = this.config.url.replace('http', 'ws') + '/socket.io/';
+        // Generate WebSocket URL (not used currently)
+        this.config.url.replace('http', 'ws') + '/socket.io/';
         
         // For development, we'll simulate a successful connection
         setTimeout(() => {

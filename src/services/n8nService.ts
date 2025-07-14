@@ -94,7 +94,7 @@ class N8NService {
     }
   }
 
-  async uploadFile(file: File, purpose: string): Promise<{ url: string; fileId: string }> {
+  async uploadFile(file: File, _purpose: string): Promise<{ url: string; fileId: string }> {
     // For now, we'll handle file uploads by converting to base64
     // In a real implementation, this might upload to a file storage service
     return new Promise((resolve, reject) => {

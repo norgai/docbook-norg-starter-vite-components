@@ -625,7 +625,7 @@ class SharingService {
     return null;
   }
 
-  private async getLocationFromIP(ipAddress: string): Promise<ShareAccess['metadata']['location']> {
+  private async getLocationFromIP(_ipAddress: string): Promise<ShareAccess['metadata']['location']> {
     // Mock geolocation - in production would use a service like MaxMind
     const mockLocations = [
       { country: 'US', region: 'CA', city: 'San Francisco' },

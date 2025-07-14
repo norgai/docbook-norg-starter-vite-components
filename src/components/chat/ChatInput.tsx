@@ -1,5 +1,6 @@
-import React, { useState, useRef, KeyboardEvent } from 'react';
-import { FileAttachment } from '../../types/chat.types';
+import React, { useState, useRef } from 'react';
+import type { FileAttachment } from '../../types/chat.types';
+import type { KeyboardEvent } from 'react';
 
 interface ChatInputProps {
   onSendMessage: (content: string, attachments?: FileAttachment[]) => void;

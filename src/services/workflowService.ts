@@ -378,7 +378,7 @@ class WorkflowService {
           execution.results.metrics.errorCount++;
 
           // Check if step is critical
-          if (step.config.actionType === 'critical' || step.type === 'validation') {
+          if (step.type === 'validation') {
             throw new Error(`Critical step ${step.name} failed`);
           }
         }

@@ -1,4 +1,5 @@
-import { ChatConversation, ChatMessage, ConversationStatus } from '../types/chat.types';
+import type { ChatConversation, ChatMessage } from '../types/chat.types';
+import { ConversationStatus } from '../types/chat.types';
 
 class ChatStorageService {
   private storageKey = 'chat-conversations';
@@ -128,7 +129,7 @@ class ChatStorageService {
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
 
     let archivedCount = 0;
-    for (const [id, conversation] of conversations) {
+    for (const [_id, conversation] of conversations) {
       const lastUpdate = new Date(conversation.updatedAt);
       if (lastUpdate < cutoffDate && conversation.status === ConversationStatus.ACTIVE) {
         conversation.status = ConversationStatus.ARCHIVED;

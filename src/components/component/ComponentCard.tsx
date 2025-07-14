@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { ComponentMetadata } from '../../types/component.types';
+import type { ComponentMetadata } from '../../types/component.types';
 
 interface ComponentCardProps {
   component: ComponentMetadata;

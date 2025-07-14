@@ -1,5 +1,4 @@
-import React from 'react';
-import { ComponentMetadata } from '../../types/component.types';
+import type { ComponentMetadata } from '../../types/component.types';
 import { ComponentCard } from './ComponentCard';
 
 interface ComponentGridProps {

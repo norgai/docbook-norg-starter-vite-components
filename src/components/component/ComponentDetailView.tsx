@@ -13,7 +13,7 @@ interface ComponentDetailViewProps {
   onChat?: () => void;
 }
 
-export function ComponentDetailView({ component, onEdit, onChat }: ComponentDetailViewProps) {
+export function ComponentDetailView({ component, onEdit }: ComponentDetailViewProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'props' | 'examples' | 'usage' | 'chat' | 'versions'>('overview');
   
   // Initialize chat functionality if enabled
@@ -499,12 +499,11 @@ function VersionsTab({ component, versionManagement }: {
   component: ComponentMetadata; 
   versionManagement: ReturnType<typeof useVersionManagement>;
 }) {
-  const [selectedVersion, setSelectedVersion] = useState<any>(null);
   const [showRollbackConfirm, setShowRollbackConfirm] = useState(false);
   const [rollbackTarget, setRollbackTarget] = useState<any>(null);
 
-  const handleVersionSelect = (version: any) => {
-    setSelectedVersion(version);
+  const handleVersionSelect = (_version: any) => {
+    // Version selection logic can be implemented here
   };
 
   const handleRollbackRequest = (version: any) => {

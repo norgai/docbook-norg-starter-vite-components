@@ -1,10 +1,9 @@
-import {
+import type {
   ComponentMetadata,
   ComponentCategory,
   ComponentRegistry,
   ComponentFilter,
-  ComponentSortOptions,
-  ComponentStatus
+  ComponentSortOptions
 } from '../types/component.types';
 
 class ComponentMetadataService {

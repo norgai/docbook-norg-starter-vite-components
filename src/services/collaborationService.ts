@@ -552,7 +552,7 @@ class CollaborationService {
           operations: [operation, recentOp],
           type: this.determineConflictType(operation, recentOp),
           severity: this.determineConflictSeverity(operation, recentOp),
-          resolution: { strategy: 'automatic' },
+          resolution: { strategy: 'manual' },
           timestamp: new Date().toISOString()
         };
         conflicts.push(conflict);
@@ -610,7 +610,8 @@ class CollaborationService {
 
   private async resolveConflictAutomatically(conflict: EditConflict): Promise<void> {
     // Simple automatic resolution: last operation wins
-    const lastOperation = conflict.operations.reduce((latest, op) => 
+    // Get the last operation (not used currently)
+    conflict.operations.reduce((latest, op) => 
       new Date(op.timestamp) > new Date(latest.timestamp) ? op : latest
     );
 

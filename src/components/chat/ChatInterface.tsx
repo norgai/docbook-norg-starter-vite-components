@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ChatMessage, FileAttachment, MessageType, MessageStatus } from '../../types/chat.types';
+import { useState, useEffect, useRef } from 'react';
+import type { ChatMessage, FileAttachment } from '../../types/chat.types';
+import { MessageType, MessageStatus } from '../../types/chat.types';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 

@@ -357,7 +357,7 @@ class ConsistencyCheckService {
       const intentKeywords = context.userIntent.toLowerCase().split(' ');
       const typeKeywords = this.getRequestTypeKeywords(context.requestType);
       
-      const hasMatch = intentKeywords.some(keyword => typeKeywords.includes(keyword));
+      const hasMatch = intentKeywords.some((keyword: string) => typeKeywords.includes(keyword));
       if (!hasMatch) {
         issues.push({
           type: 'inconsistent',
@@ -383,7 +383,7 @@ class ConsistencyCheckService {
     };
   }
 
-  private async checkWorkflowStepOrder(rule: ConsistencyRule, target: ConsistencyTarget): Promise<ConsistencyResult> {
+  private async checkWorkflowStepOrder(_rule: ConsistencyRule, target: ConsistencyTarget): Promise<ConsistencyResult> {
     const issues: ConsistencyIssue[] = [];
     const suggestions: string[] = [];
     let score = 1.0;
@@ -410,7 +410,7 @@ class ConsistencyCheckService {
     // Check dependency consistency
     for (const step of steps) {
       for (const depId of step.dependencies || []) {
-        const depStep = steps.find(s => s.id === depId);
+        const depStep = steps.find((s: any) => s.id === depId);
         if (!depStep) {
           issues.push({
             type: 'missing',
@@ -449,7 +449,7 @@ class ConsistencyCheckService {
     };
   }
 
-  private async checkCodeConsistency(rule: ConsistencyRule, target: ConsistencyTarget): Promise<ConsistencyResult> {
+  private async checkCodeConsistency(_rule: ConsistencyRule, target: ConsistencyTarget): Promise<ConsistencyResult> {
     const issues: ConsistencyIssue[] = [];
     const suggestions: string[] = [];
     let score = 1.0;
@@ -530,8 +530,9 @@ class ConsistencyCheckService {
 
     for (const [field, requirements] of Object.entries(schema)) {
       const value = data[field];
+      const req = requirements as any;
       
-      if (requirements.required && (value === undefined || value === null)) {
+      if (req.required && (value === undefined || value === null)) {
         issues.push({
           type: 'missing',
           severity: 'high',
@@ -545,16 +546,16 @@ class ConsistencyCheckService {
         score -= 0.2;
       }
 
-      if (value !== undefined && requirements.type && typeof value !== requirements.type) {
+      if (value !== undefined && req.type && typeof value !== req.type) {
         issues.push({
           type: 'invalid',
           severity: 'medium',
           field: `data.${field}.type`,
-          expected: requirements.type,
+          expected: req.type,
           actual: typeof value,
           message: `Field '${field}' has incorrect type`,
           fixable: true,
-          suggestedFix: `Convert '${field}' to ${requirements.type}`
+          suggestedFix: `Convert '${field}' to ${req.type}`
         });
         score -= 0.15;
       }
@@ -643,11 +644,11 @@ class ConsistencyCheckService {
 
   // Helper methods
   private isRuleApplicable(rule: ConsistencyRule, target: ConsistencyTarget): boolean {
-    return rule.category === target.type || rule.category === 'system';
+    return rule.category === target.type || target.type === 'system';
   }
 
   private getRequestTypeKeywords(requestType: string): string[] {
-    const keywordMap = {
+    const keywordMap: { [key: string]: string[] } = {
       styling: ['style', 'color', 'css', 'design', 'appearance'],
       functionality: ['function', 'feature', 'behavior', 'logic', 'action'],
       structure: ['structure', 'layout', 'organization', 'architecture'],
@@ -724,12 +725,12 @@ class ConsistencyCheckService {
     return recommendations;
   }
 
-  private evaluateAutoFixCondition(condition: AutoFixCondition, check: ConsistencyCheck): boolean {
+  private evaluateAutoFixCondition(_condition: AutoFixCondition, _check: ConsistencyCheck): boolean {
     // Simple condition evaluation logic
     return true; // Placeholder
   }
 
-  private async applyAutoFixAction(action: AutoFixAction, target: ConsistencyTarget, check: ConsistencyCheck): Promise<void> {
+  private async applyAutoFixAction(action: AutoFixAction, _target: ConsistencyTarget, _check: ConsistencyCheck): Promise<void> {
     // Apply auto-fix action logic
     console.log(`Applying auto-fix action: ${action.type} on ${action.field}`);
   }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChatMessage, MessageType, MessageStatus } from '../../types/chat.types';
+import type { ChatMessage } from '../../types/chat.types';
+import { MessageType, MessageStatus } from '../../types/chat.types';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -10,7 +10,6 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ 
   message, 
-  isLatest = false, 
   showTimestamp = true,
   className = ""
 }: MessageBubbleProps) {

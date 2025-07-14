@@ -1,12 +1,13 @@
 // Component prop types for chat interface
 
-import React from 'react';
-import { 
+import type { 
   ChatMessage, 
   ChatConversation, 
-  FileAttachment, 
+  FileAttachment
+} from './chat.types';
+import { 
   MessageType,
-  MessageStatus 
+  type ChatSettings
 } from './chat.types';
 
 // Main chat interface props

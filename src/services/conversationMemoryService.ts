@@ -670,7 +670,7 @@ class ConversationMemoryService {
     const cutoffTime = now - this.retentionPeriod;
 
     // Archive old conversations
-    for (const [id, conversation] of this.storage.conversations.entries()) {
+    for (const [_id, conversation] of this.storage.conversations.entries()) {
       const conversationTime = new Date(conversation.startedAt).getTime();
       if (conversationTime < cutoffTime && conversation.status !== 'archived') {
         conversation.status = 'archived';
@@ -691,7 +691,7 @@ class ConversationMemoryService {
 
   private async runCompressionTasks(): Promise<void> {
     // Compress contexts that haven't been accessed recently
-    for (const [id, context] of this.storage.contexts.entries()) {
+    for (const [_id, context] of this.storage.contexts.entries()) {
       if (context.compressionLevel === 'none' && this.shouldCompress(context)) {
         context.snapshot = await this.compressContextSnapshot(context.snapshot);
         context.compressionLevel = 'medium';

@@ -145,6 +145,7 @@ export const VersionEventType = {
   CONFLICT_RESOLVED: 'conflict:resolved',
   ROLLBACK_STARTED: 'rollback:started',
   ROLLBACK_COMPLETED: 'rollback:completed',
+  ROLLBACK_FAILED: 'rollback:failed',
   TAG_CREATED: 'tag:created'
 } as const;
 

@@ -405,7 +405,8 @@ class NpmService {
         // Simulate publishing to registry
         const publishStart = Date.now();
         await this.publishToRegistry(npmPackage, tarball, config);
-        const publishTime = Date.now() - publishStart;
+        // Track publish time (not used currently)
+        Date.now() - publishStart;
 
         // Update package metadata
         npmPackage.metadata.publishedAt = new Date().toISOString();
@@ -734,7 +735,7 @@ class NpmService {
     });
 
     return Array.from(nameGroups.entries())
-      .filter(([name, versions]) => versions.length > 1)
+      .filter(([_name, versions]) => versions.length > 1)
       .map(([name, versions]) => ({ name, versions }));
   }
 
@@ -970,8 +971,8 @@ class NpmService {
 
   private async publishToRegistry(
     npmPackage: NpmPackage,
-    tarball: { size: number; files: string[] },
-    config: NpmPublishConfig
+    _tarball: { size: number; files: string[] },
+    _config: NpmPublishConfig
   ): Promise<void> {
     // Simulate publishing to NPM registry
     console.log(`Publishing ${npmPackage.name}@${npmPackage.version} to registry`);

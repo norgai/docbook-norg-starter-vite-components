@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ComponentCategory } from '../../types/component.types';
+import { useState } from 'react';
+import type { ComponentCategory } from '../../types/component.types';
 
 interface CategoryNavigationProps {
   categories: ComponentCategory[];

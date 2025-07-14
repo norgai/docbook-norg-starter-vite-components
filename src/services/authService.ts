@@ -797,7 +797,7 @@ class AuthService {
     if (!stored) return;
 
     try {
-      const { sessionId, token } = JSON.parse(stored);
+      const { token } = JSON.parse(stored);
       const validation = await this.validateToken(token);
       
       if (validation.isValid && validation.user && validation.session) {

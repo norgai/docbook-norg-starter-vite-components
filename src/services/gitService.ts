@@ -30,7 +30,7 @@ class GitService {
 
   constructor(config: GitConfig = {}) {
     this.config = {
-      repositoryPath: process.cwd(),
+      repositoryPath: (typeof process !== 'undefined') ? process.cwd() : '.',
       autoCommit: false,
       commitPrefix: '[AI-Generated]',
       excludePatterns: ['node_modules', '.git', 'dist', 'build'],
@@ -232,7 +232,7 @@ class GitService {
   }
 
   // Get diff between commits
-  async getDiff(fromCommit: string, toCommit: string = 'HEAD'): Promise<string> {
+  async getDiff(_fromCommit: string, _toCommit: string = 'HEAD'): Promise<string> {
     try {
       await this.ensureInitialized();
       

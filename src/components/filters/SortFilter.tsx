@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ComponentSortOptions } from '../../types/component.types';
+import { useState } from 'react';
+import type { ComponentSortOptions } from '../../types/component.types';
 
 interface SortFilterProps {
   sortOptions: ComponentSortOptions;

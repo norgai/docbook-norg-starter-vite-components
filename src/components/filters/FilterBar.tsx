@@ -1,9 +1,8 @@
-import React from 'react';
 import { SearchBar } from '../search/SearchBar';
 import { CategoryFilter } from './CategoryFilter';
 import { TagFilter } from './TagFilter';
 import { SortFilter } from './SortFilter';
-import { ComponentCategory, ComponentFilter, ComponentSortOptions } from '../../types/component.types';
+import type { ComponentCategory, ComponentFilter, ComponentSortOptions } from '../../types/component.types';
 
 interface FilterBarProps {
   filter: ComponentFilter;
