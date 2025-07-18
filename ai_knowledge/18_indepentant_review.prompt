@@ -1,4 +1,4 @@
-settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}", VERSION: "{VERSION}"
 
 - do not edit any other files
 - Only edit the files listed below.
@@ -15,25 +15,17 @@ SCORING GUIDELINES:
 - Evaluate stylistic accuracy: colors, typography, shadows, borders, opacity
 - Consider responsive fidelity: how well the component adapts compared to designs
 - Ignore image content differences (e.g., placeholder images vs actual content)
-- Disregard background differences in the following scenario: design has transparent bg
 - Compare actual UI elements for size, position, and shape consistency
 - Look for missing or additional elements between design and implementation
+- Examine button shapes, positions, and sizes, rounded corners, shadows
+- Look for font alignment
 
-
-File 1: Edit/Add File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_comparison.prompt</file_path>"
-    Description:  Identify any differences among the images just uploaded by inserting a similarity score into this file.
-    Instructions: 
-        - Only add the single file: independent_review_comparison.prompt
-        - Do not add or edit any other files.
-        - Estimate a percentage of how alike the images are on a single line: SIMILARITY_SCORE={percentage}
-        - no other contents is required for this file.
-
-File 2: Edit/Add File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences.prompt</file_path>"
+File 1: Edit/Add File: "<file_path>/packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/independent_review_differences_{VERSION}.prompt</file_path>"
     Description:  Identify any differences among the images just uploaded
     Instructions: 
         - Only add/edit the single file: independent_review_differences.prompt
         - Do not add or edit any other files.
-                - desktop_design.png and mobile_design.png are the original designs and new_component_screenshot.png is our current component shown on the screen.
+                - desktop_design_v0.png and mobile_design_v0.png are the original designs and new_component_screenshot.png is our current component shown on the screen.
         - We want the component to look the same as the design. Identify what needs to change in new_component_screenshot.png to match the designs.
         - look at fonts, styles, colours, images, spacings, etc. as needed.
         - Pay attention to font type, sizes, weights, styles, spacings.

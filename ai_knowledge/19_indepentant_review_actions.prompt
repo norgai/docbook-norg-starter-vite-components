@@ -1,12 +1,13 @@
-settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}", VERSION: "{VERSION}"
 
 - do not edit any other files
 - Only edit the files listed below.
 - Do not modify the contents of the file_path element. Strictly maintain the file path as provided.
 
-File 1 & 2:  Edit/Add File: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
+File 1 & 2:  Edit/Add File: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/lovableToCode_{VERSION}.tsx</file_path>"
     - Description: The reference code attached contains the differences between the original designs and the current component.
     - Instructions: 
         - Update the React/TSX code so that the component looks the same as the design.
         - Make changes and address those differences mentioned in Prompt Part E :: Name: Reference
         - Updated must comply with tailwind V4. 
+        - if div sizing greater than w-[1000px] has been used replace with w-full so the component is responsive.

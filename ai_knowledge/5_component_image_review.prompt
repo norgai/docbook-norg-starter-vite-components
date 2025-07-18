@@ -3,7 +3,7 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 - do not edit any other files
 - Only edit the files listed below.
 
-File 1: Edit/Add File: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/screenshot_review_comparison.prompt"
+File 1: Edit/Add File: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/screenshot_review_comparisonlovableToCode_{VERSION}.tsx.prompt"
     Description:  Identify any differences among the images just uploaded.
     location:  Ensure the file is added to this folder: "packages/headless-basics-components/src/theme/{THEME}/components/{COMPONENT}/ai_knowledge/"
     Instructions: 

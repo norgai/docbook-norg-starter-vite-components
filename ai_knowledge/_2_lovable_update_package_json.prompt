@@ -1,0 +1,11 @@
+settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+
+- do not edit any other files
+- Only edit the files listed below.
+             
+File 1: Add File: "package.json"
+    Description: Add the scripts to the package.json file.
+    Instructions: 
+        """ json
+            "repomix:component:copy": "cp -f ai_knowledge/repo_reserve/component/repomix-base.prompt ./ && cp -f ai_knowledge/repo_reserve/component/repomix.config.json ./",
+            "repomix": "cp -f ./ai_knowledge/repo_reserve/workspace/repomix-base.prompt ./ && cp -f ./ai_knowledge/repo_reserve/workspace/repomix.config.json ./ && repomix"

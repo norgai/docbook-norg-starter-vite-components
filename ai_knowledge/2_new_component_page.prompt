@@ -1,4 +1,4 @@
-settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
+settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}", VERSION: "{VERSION}"
 
 - do not edit any other files
 - Only edit the files listed below.
@@ -7,10 +7,10 @@ settings:  "THEME": "{THEME}", "COMPONENT": "{COMPONENT}"
 File 1: Edit File: "src/pages/theme/{THEME}/components/{COMPONENT}/page.tsx"
     Description: Add a new page for the component in the theme directory.
     Instructions: 
-        - Include the component found at "src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx" in this page.
-        - Only include the page on a blank page. Nothing else. 
-        - the component "{COMPONENT}" should be imported and rendered in the page.
-        - imports should not start with @ and be relative to the file.
+        - Step A: Render Fields: Meta Infomration to Display: Render the component name as a heading above the component
+        - Step B: Component Version Render: Import and add render the matching component version onto the page. Import the component found at "src/components/theme/{THEME}/components/{COMPONENT}/lovableToCode_{VERSION}.tsx" in this page. 
+        - Steo C: Render Sections: Title: Add a title "Design Reference Screenshot" and below include an image with src "/components/{COMPONENT}/ai_knowledge/desktop_design_{VERSION}.png".
+        - Guideline 1: imports should not start with @ and be relative to the file.
 
 File 2: Edit File: "src/App.tsx"
     Description: Add the the page created in File 1 to the App.tsx file as a route based on the component name "{COMPONENT}".

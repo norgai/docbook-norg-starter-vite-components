@@ -1,0 +1,5 @@
+Task: You are an expert UI designer who has knack for identifying the components that make up a page. 
+Go through all the components and pages in this lovable site and update data attributes as shown below.
+
+1 -  make sure a sitemap-docbook.xml exists in the /public folder sitemap-docbook.xml   that contains a properly formatted sitemap in XML format to spec: xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+     

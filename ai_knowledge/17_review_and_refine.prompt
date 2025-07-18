@@ -9,12 +9,12 @@ Task 1: Read File: "<file_path>/packages/headless-basics-components/src/theme/{T
     - Instructions: 
         - Review the analysis and make any changes to the code that are required to make the component match the original design.
         - Only edit tsx files and the variants found in:
-            - Location: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/figmaToCode.tsx</file_path>"
+            - Location: "<file_path>/src/components/theme/{THEME}/components/{COMPONENT}/lovableToCode_{VERSION}.tsx</file_path>"
         - Adjust the styles, fonts, colours, spacings, etc. as needed.
         - Pay attention to font type, sizes, weights, styles, spacings.
         - pay attention to margins, paddings, borders, shadows, etc.
         - Pay attention to the size, shape and position of all elements.
         - Use Tailwind V4 for all styles.
-        - The goal is to make the component match 95% or higher of the original design.
+        - The goal is to make the component match 99% or higher of the original design.
         - Be very specific in the differences, try not be vague or general.
             
