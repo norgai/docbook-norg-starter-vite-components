@@ -14,20 +14,36 @@ interface ComponentDetailViewProps {
 }
 
 export function ComponentDetailView({ component, onEdit }: ComponentDetailViewProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'props' | 'examples' | 'usage' | 'chat' | 'versions'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'props' | 'examples' | 'usage' | 'chat' | 'versions'>('chat');
   
   // Initialize chat functionality if enabled
-  const chatFlow = component.chatEnabled ? useChatFlow(component.id) : null;
-  
+  const chatFlow = useChatFlow(component.id);
+  console.count("🚀 ~ ComponentDetailView.tsx:22 ~ ComponentDetailView ~ chatFlow:")
+
+  //TODO: implement realTimeUpdates later, comment to prevent re-render component multiple times
   // Initialize real-time updates
-  const realTimeUpdates = useRealTimeUpdates({
-    componentId: component.id,
-    autoConnect: component.chatEnabled,
-    watchFiles: true
-  });
+  // const realTimeUpdates = useRealTimeUpdates({
+  //   componentId: component.id,
+  //   autoConnect: component.chatEnabled,
+  //   watchFiles: true
+  // });
+  const realTimeUpdates = {
+    clearFileChanges: ()=> {},
+    connect: async ()=> {},
+    connectionStatus: "connected" as const,
+    disconnect: ()=> {},
+    error: null,
+    fileChanges: [],
+    hasRecentFileChanges: false,
+    hasRecentProgress: false,
+    isConnected: true,
+    lastProgress: null,
+    requestProgress: ()=> {},
+    retry: ()=> {},
+  };
 
   // Initialize version management
-  const versionManagement = useVersionManagement(component.id);
+  // const versionManagement = useVersionManagement(component.id);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -129,9 +145,9 @@ export function ComponentDetailView({ component, onEdit }: ComponentDetailViewPr
         {activeTab === 'usage' && (
           <UsageTab component={component} />
         )}
-        {activeTab === 'versions' && (
+        {/* {activeTab === 'versions' && (
           <VersionsTab component={component} versionManagement={versionManagement} />
-        )}
+        )} */}
         {activeTab === 'chat' && component.chatEnabled && chatFlow && (
           <ChatTab component={component} chatFlow={chatFlow} realTimeUpdates={realTimeUpdates} />
         )}
@@ -428,7 +444,7 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
             <span className="font-medium text-green-800">Live Updates</span>
           </div>
           <p className="text-green-700 text-sm">
-            {realTimeUpdates.isConnected 
+            {realTimeUpdates?.isConnected 
               ? "✅ Monitoring file changes"
               : "⏳ Connecting to live updates"
             }
@@ -437,7 +453,7 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
       </div>
 
       {/* File Changes */}
-      {realTimeUpdates.hasRecentFileChanges && (
+      {realTimeUpdates?.hasRecentFileChanges && (
         <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
           <h4 className="font-medium text-purple-900 mb-2">Recent File Changes</h4>
           <div className="space-y-1">
@@ -464,9 +480,10 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
 
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <ChatInterface
-          componentId={component.id}
-          onSendMessage={chatFlow.sendMessage}
-          isConnected={chatFlow.isConnected && realTimeUpdates.isConnected}
+          // componentId={component.id}
+          // onSendMessage={chatFlow.sendMessage}
+          // isConnected={chatFlow.isConnected && realTimeUpdates?.isConnected}
+          isConnected={chatFlow.isConnected}
           disabled={!chatFlow.isConnected}
           height="500px"
         />

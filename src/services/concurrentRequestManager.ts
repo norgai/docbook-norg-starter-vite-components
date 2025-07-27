@@ -299,7 +299,7 @@ class ConcurrentRequestManager {
 
   private async handleChatRequest(request: RequestQueue): Promise<any> {
     // Send chat request to N8N via WebSocket or HTTP
-    const response = await fetch('http://localhost:5678/webhook/chat', {
+    const response = await fetch('http://localhost:5678/webhook/chatbot?action=enqueue', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(request.payload)

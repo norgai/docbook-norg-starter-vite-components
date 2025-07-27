@@ -284,6 +284,7 @@ export const chatStorageService = new ChatStorageService();
 // Auto-cleanup on page load (once per day)
 const lastCleanupKey = 'chat_last_auto_cleanup';
 const lastCleanup = localStorage.getItem(lastCleanupKey);
+console.log("🚀 ~ chatStorage.service.ts:287 ~ lastCleanup:", lastCleanup)
 const now = new Date();
 const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 

@@ -1,4 +1,4 @@
-import type { ChatMessage } from '../../types/chat.types';
+import type { ChatMessage, MessageMetadata } from '../../types/chat.types';
 import { MessageType, MessageStatus } from '../../types/chat.types';
 
 interface MessageBubbleProps {
@@ -154,7 +154,7 @@ function MessageStatusIndicator({ status }: { status: MessageStatus }) {
   );
 }
 
-function MessageMetadata({ metadata, isUser }: { metadata: any; isUser: boolean }) {
+function MessageMetadata({ metadata, isUser }: { metadata: MessageMetadata; isUser: boolean }) {
   if (!metadata.componentId && !metadata.requestType && !metadata.changes) {
     return null;
   }

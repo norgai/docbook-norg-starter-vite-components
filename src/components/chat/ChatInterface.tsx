@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import type { ChatMessage, FileAttachment } from '../../types/chat.types';
+import type { ChatMessage, FileAttachment, QueueItem } from '../../types/chat.types';
 import { MessageType, MessageStatus } from '../../types/chat.types';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
+import { n8nService } from '../../services/n8nService';
 
 interface ChatInterfaceProps {
   componentId?: string;
@@ -25,6 +26,7 @@ export function ChatInterface({
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
+  const [queueItems, setQueueItems] = useState<Map<number, QueueItem>>(new Map());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -66,11 +68,67 @@ export function ChatInterface({
       // Show typing indicator
       setIsTyping(true);
 
-      // Call the send message handler
       if (onSendMessage) {
+        // Use custom handler if provided
         await onSendMessage(content, attachments);
+      } else if (componentId) {
+        // Use N8N queue system for component modification
+        const conversationId = n8nService.generateConversationId(componentId);
+        
+        const response = await n8nService.sendChatMessage({
+          componentId,
+          conversationId,
+          message: content,
+          messageType: MessageType.TEXT,
+          metadata: {
+            framework: 'react',
+            language: 'typescript'
+          }
+        });
+
+        if (response.success && response.queueId) {
+          // Add queue status message
+          const queueMessage: ChatMessage = {
+            id: generateMessageId(),
+            content: response.content,
+            role: 'assistant',
+            timestamp: new Date().toISOString(),
+            type: response.type,
+            status: MessageStatus.RECEIVED,
+            metadata: {
+              componentId,
+              queueId: response.queueId
+            }
+          };
+
+          setMessages(prev => [...prev, queueMessage]);
+
+          // Store queue item for potential polling
+          if (response.queueId) {
+            setQueueItems(prev => {
+              const newMap = new Map(prev.set(response.queueId!, {
+                id: response.queueId!,
+                componentId,
+                conversationId,
+                message: content,
+                messageType: MessageType.TEXT,
+                status: 'pending',
+                priority: 5,
+                createdAt: new Date().toISOString(),
+                retryCount: 0,
+                metadata: {}
+              }));
+              
+              // Log for debugging - could be used for queue polling in the future
+              console.log(`Queue item stored for polling:`, Array.from(newMap.keys()));
+              return newMap;
+            });
+          }
+        } else {
+          throw new Error(response.error || 'Failed to enqueue request');
+        }
       } else {
-        // Default behavior - simulate AI response
+        // Fallback to simulation
         await simulateAIResponse(content);
       }
     } catch (error) {
@@ -84,8 +142,9 @@ export function ChatInterface({
       );
 
       // Add error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       addAIMessage(
-        "I apologize, but I'm having trouble processing your request right now. Please try again.",
+        `I apologize, but I'm having trouble processing your request: ${errorMessage}`,
         MessageType.ERROR
       );
     } finally {
@@ -139,6 +198,7 @@ export function ChatInterface({
   } : null;
 
   const allMessages = welcomeMessage ? [welcomeMessage, ...messages] : messages;
+  // console.log("🚀 ~ ChatInterface.tsx:201 ~ ChatInterface ~ allMessages:", allMessages)
 
   return (
     <div className={`flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
@@ -154,6 +214,7 @@ export function ChatInterface({
             </h3>
             <span className="text-xs text-gray-500">
               {isConnected ? '• N8N Connected' : '• N8N Disconnected'}
+              {queueItems.size > 0 && ` • ${queueItems.size} queued`}
             </span>
           </div>
           {isTyping && (
@@ -177,7 +238,7 @@ export function ChatInterface({
       {/* Messages Container */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
+        className="overflow-y-auto p-4 space-y-4"
         style={{ height, maxHeight: height }}
       >
         {allMessages.length === 0 ? (
@@ -207,14 +268,14 @@ export function ChatInterface({
       {/* Input Area */}
       <ChatInput
         onSendMessage={handleSendMessage}
-        disabled={disabled || !isConnected}
-        placeholder={
-          !isConnected 
-            ? "Disconnected - trying to reconnect..." 
-            : disabled 
-            ? "Chat is disabled"
-            : "Ask me to modify this component..."
-        }
+        // disabled={disabled || !isConnected}
+        // placeholder={
+        //   !isConnected 
+        //     ? "Disconnected - trying to reconnect..." 
+        //     : disabled 
+        //     ? "Chat is disabled"
+        //     : "Ask me to modify this component..."
+        // }
         isTyping={isTyping}
         allowAttachments={true}
       />

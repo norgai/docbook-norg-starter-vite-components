@@ -22,6 +22,8 @@ export function useChatFlow(componentId: string) {
     updateMessage,
     getOrCreateConversation
   } = useChatHistory(componentId);
+  console.log("🚀 ~ useChatFlow ~ componentId:", componentId)
+  console.log("🚀 ~ useChatFlow.ts:25 ~ useChatFlow ~ activeConversation:", activeConversation)
 
   const [flowState, setFlowState] = useState<ChatFlowState>({
     isTyping: false,
@@ -97,7 +99,7 @@ export function useChatFlow(componentId: string) {
         conversationId: activeConversation.id,
         message: content,
         messageType,
-        context: {
+        metadata: {
           framework: 'react',
           language: 'typescript'
         }
@@ -274,15 +276,16 @@ export function useChatFlow(componentId: string) {
 
     // Check immediately
     checkConnection();
+    console.count('🚀 ~ checkConnection');
 
     // Set up periodic checks
-    const connectionInterval = setInterval(checkConnection, 30000); // Check every 30 seconds
+    // const connectionInterval = setInterval(checkConnection, 30000); // Check every 30 seconds
 
     window.addEventListener('online', checkConnection);
     window.addEventListener('offline', checkConnection);
 
     return () => {
-      clearInterval(connectionInterval);
+      // clearInterval(connectionInterval);
       window.removeEventListener('online', checkConnection);
       window.removeEventListener('offline', checkConnection);
     };

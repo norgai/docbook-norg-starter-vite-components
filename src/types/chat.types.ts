@@ -16,7 +16,7 @@ export const MessageType = {
   IMAGE: 'image',
   COMPONENT: 'component',
   ERROR: 'error',
-  SYSTEM: 'system'
+  SYSTEM: 'system',
 } as const;
 
 export type MessageType = typeof MessageType[keyof typeof MessageType];
@@ -38,8 +38,9 @@ export interface MessageMetadata {
   imageUrl?: string;
   codeLanguage?: string;
   errorDetails?: string;
-  codeChanges?: any[];
+  codeChanges?: ComponentChangePreview[];
   n8nResponse?: boolean;
+  queueId?: number;
 }
 
 export interface ComponentChangePreview {
@@ -112,4 +113,34 @@ export interface ChatSettings {
   soundEnabled: boolean;
   maxHistoryLength: number;
   theme: 'light' | 'dark' | 'auto';
+}
+
+// N8N Queue Integration Types
+export interface QueueItem {
+  id: number;
+  componentId: string;
+  conversationId: string;
+  message: string;
+  messageType: MessageType;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  priority: number;
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  prUrl?: string;
+  branchName?: string;
+  errorMessage?: string;
+  retryCount: number;
+  metadata: Record<string, unknown>;
+}
+
+export interface N8NResponse<T = unknown> {
+  success: boolean;
+  operation: string;
+  message?: string;
+  data?: T;
+}
+
+export interface EnqueueResponse extends N8NResponse<{ queueId: number }> {
+  operation: 'enqueue';
 }

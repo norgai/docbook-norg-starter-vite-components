@@ -3,6 +3,7 @@ import type { ChatConversation, ChatMessage } from '../types/chat.types';
 import { chatStorageService } from '../services/chatStorage.service';
 
 export function useChatHistory(componentId?: string) {
+  console.log("🚀 ~ useChatHistory.ts:6 ~ useChatHistory ~ componentId:", componentId)
   const [conversations, setConversations] = useState<Map<string, ChatConversation>>(new Map());
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -11,6 +12,7 @@ export function useChatHistory(componentId?: string) {
   useEffect(() => {
     const loadConversations = () => {
       const allConversations = chatStorageService.loadConversations();
+      console.log("🚀 ~ useChatHistory.ts:15 ~ loadConversations ~ allConversations:", allConversations)
       setConversations(allConversations);
       setLoading(false);
     };
