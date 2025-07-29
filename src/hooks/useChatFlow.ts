@@ -5,6 +5,7 @@ import { useChatHistory } from './useChatHistory';
 import { n8nService } from '../services/n8nService';
 import type { N8NChatRequest } from '../services/n8nService';
 import { concurrentRequestManager } from '../services/concurrentRequestManager';
+import { v4 as uuidV4 } from 'uuid';
 // import { websocketService } from '../services/websocketService';
 
 interface ChatFlowState {
@@ -17,13 +18,10 @@ interface ChatFlowState {
 
 export function useChatFlow(componentId: string) {
   const {
-    activeConversation,
+    conversation,
     addMessage,
     updateMessage,
-    getOrCreateConversation
   } = useChatHistory(componentId);
-  console.log("🚀 ~ useChatFlow ~ componentId:", componentId)
-  console.log("🚀 ~ useChatFlow.ts:25 ~ useChatFlow ~ activeConversation:", activeConversation)
 
   const [flowState, setFlowState] = useState<ChatFlowState>({
     isTyping: false,
@@ -36,34 +34,29 @@ export function useChatFlow(componentId: string) {
   const abortControllerRef = useRef<AbortController | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
 
-  // Initialize conversation
-  useEffect(() => {
-    if (componentId && !activeConversation) {
-      getOrCreateConversation(componentId);
-    }
-  }, [componentId, activeConversation, getOrCreateConversation]);
-
   // Send message with full flow management
   const sendMessage = useCallback(async (
     content: string, 
     attachments?: FileAttachment[],
     messageType: MessageType = MessageType.TEXT
   ) => {
-    if (!activeConversation) return;
+    if (!conversation) return;
 
     // Create user message
     const userMessage: ChatMessage = {
-      id: generateMessageId(),
+      id: uuidV4(),
       content,
       role: 'user',
-      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       type: messageType,
       status: MessageStatus.SENDING,
-      metadata: attachments ? { requestType: detectRequestType(content) } : undefined
+      metadata: attachments ? { requestType: detectRequestType(content) } : {},
+      conversationId: conversation.id,
     };
 
     // Add user message immediately
-    addMessage(activeConversation.id, userMessage);
+    addMessage(conversation.id, userMessage);
 
     // Update flow state
     setFlowState(prev => ({
@@ -75,7 +68,7 @@ export function useChatFlow(componentId: string) {
 
     try {
       // Update message status to sent
-      updateMessage(activeConversation.id, userMessage.id, { 
+      updateMessage(conversation.id, userMessage.id, { 
         status: MessageStatus.SENT 
       });
 
@@ -89,14 +82,14 @@ export function useChatFlow(componentId: string) {
           stage: 'Sending Request',
           progress: 10,
           message: 'Preparing your request...',
-          data: { conversationId: activeConversation.id, messageId: userMessage.id }
+          data: { conversationId: conversation.id, messageId: userMessage.id }
         }
       }));
 
       // Process the message via concurrent request manager
       const n8nRequest: N8NChatRequest = {
-        componentId: activeConversation.componentId,
-        conversationId: activeConversation.id,
+        componentId: conversation.componentId,
+        conversationId: conversation.id,
         message: content,
         messageType,
         metadata: {
@@ -128,7 +121,7 @@ export function useChatFlow(componentId: string) {
               stage: data.request.status === 'processing' ? 'Processing with AI' : 'Sending Request',
               progress: progressValue,
               message: data.request.status === 'processing' ? 'AI is analyzing your request...' : 'Waiting in queue...',
-              data: { conversationId: activeConversation.id, messageId: userMessage.id }
+              data: { conversationId: conversation.id, messageId: userMessage.id }
             }
           }));
         }
@@ -160,12 +153,14 @@ export function useChatFlow(componentId: string) {
 
       // Create AI response message
       const aiMessage: ChatMessage = {
-        id: generateMessageId(),
+        id: uuidV4(),
         content: response.content,
         role: 'assistant',
-        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         type: response.type,
         status: MessageStatus.RECEIVED,
+        conversationId: conversation.id,
         metadata: {
           codeChanges: response.codeChanges,
           n8nResponse: true
@@ -173,10 +168,10 @@ export function useChatFlow(componentId: string) {
       };
 
       // Add AI response
-      addMessage(activeConversation.id, aiMessage);
+      addMessage(conversation.id, aiMessage);
 
       // Update message status to received
-      updateMessage(activeConversation.id, userMessage.id, { 
+      updateMessage(conversation.id, userMessage.id, { 
         status: MessageStatus.RECEIVED 
       });
 
@@ -193,7 +188,7 @@ export function useChatFlow(componentId: string) {
 
       if (error.name === 'AbortError') {
         // Request was cancelled
-        updateMessage(activeConversation.id, userMessage.id, { 
+        updateMessage(conversation.id, userMessage.id, { 
           status: MessageStatus.ERROR 
         });
         return;
@@ -210,22 +205,24 @@ export function useChatFlow(componentId: string) {
       }));
 
       // Update user message status to error
-      updateMessage(activeConversation.id, userMessage.id, { 
+      updateMessage(conversation.id, userMessage.id, { 
         status: MessageStatus.ERROR 
       });
 
       // Add error message from AI
       const errorAIMessage: ChatMessage = {
-        id: generateMessageId(),
+        id: uuidV4(),
         content: `I apologize, but I encountered an error: ${errorMessage}. Please try again.`,
         role: 'assistant',
-        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         type: MessageType.ERROR,
         status: MessageStatus.RECEIVED,
+        conversationId: conversation.id,
         metadata: { errorDetails: error.message }
       };
 
-      addMessage(activeConversation.id, errorAIMessage);
+      addMessage(conversation.id, errorAIMessage);
 
       // Attempt automatic retry for network errors
       if (shouldRetry(error, flowState.retryCount)) {
@@ -234,20 +231,20 @@ export function useChatFlow(componentId: string) {
         }, getRetryDelay(flowState.retryCount));
       }
     }
-  }, [activeConversation, addMessage, updateMessage, flowState.retryCount]);
+  }, [conversation, addMessage, updateMessage, flowState.retryCount]);
 
   // Retry last message
   const retryLastMessage = useCallback(() => {
-    if (!activeConversation || !activeConversation.messages.length) return;
+    if (!conversation || !conversation.messages.length) return;
 
-    const lastUserMessage = [...activeConversation.messages]
+    const lastUserMessage = [...conversation.messages]
       .reverse()
       .find(msg => msg.role === 'user');
 
     if (lastUserMessage) {
       sendMessage(lastUserMessage.content, undefined, lastUserMessage.type);
     }
-  }, [activeConversation, sendMessage]);
+  }, [conversation, sendMessage]);
 
   // Clear error state
   const clearError = useCallback(() => {
@@ -276,7 +273,6 @@ export function useChatFlow(componentId: string) {
 
     // Check immediately
     checkConnection();
-    console.count('🚀 ~ checkConnection');
 
     // Set up periodic checks
     // const connectionInterval = setInterval(checkConnection, 30000); // Check every 30 seconds
@@ -304,7 +300,7 @@ export function useChatFlow(componentId: string) {
   }, []);
 
   return {
-    conversation: activeConversation,
+    conversation,
     sendMessage,
     retryLastMessage,
     cancelRequest,
@@ -314,11 +310,6 @@ export function useChatFlow(componentId: string) {
     error: flowState.error,
     canRetry: flowState.retryCount < 3
   };
-}
-
-// Helper functions
-function generateMessageId(): string {
-  return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 function detectRequestType(content: string): 'styling' | 'functionality' | 'structure' | 'props' {

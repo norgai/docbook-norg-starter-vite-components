@@ -480,7 +480,9 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
 
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <ChatInterface
-          // componentId={component.id}
+          componentId={component.id}
+          conversationId={chatFlow.conversation?.id}
+          initialMessages={chatFlow.conversation?.messages || []}
           // onSendMessage={chatFlow.sendMessage}
           // isConnected={chatFlow.isConnected && realTimeUpdates?.isConnected}
           isConnected={chatFlow.isConnected}

@@ -1,5 +1,6 @@
 // Concurrent Request Manager for handling multiple AI requests
 import { websocketService } from './websocketService';
+import { v4 as uuidV4 } from 'uuid';
 
 export interface RequestQueue {
   id: string;
@@ -52,7 +53,7 @@ class ConcurrentRequestManager {
       id?: string;
     } = {}
   ): string {
-    const id = options.id || this.generateId();
+    const id = options.id || uuidV4();
     
     // Check if request already exists
     if (this.getRequest(id)) {
@@ -347,10 +348,6 @@ class ConcurrentRequestManager {
         }
       });
     }
-  }
-
-  private generateId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 

@@ -1,5 +1,6 @@
 import type { ChatConversation, ChatMessage } from '../types/chat.types';
 import { ConversationStatus } from '../types/chat.types';
+import { v4 as uuidV4 } from 'uuid';
 
 class ChatStorageService {
   private storageKey = 'chat-conversations';
@@ -64,7 +65,7 @@ class ChatStorageService {
   // Create a new conversation
   createConversation(componentId: string, title?: string): ChatConversation {
     const conversation: ChatConversation = {
-      id: this.generateConversationId(),
+      id: uuidV4(),
       componentId,
       title: title || `Chat with ${componentId}`,
       messages: [],
@@ -236,11 +237,6 @@ class ChatStorageService {
     }
   }
 
-  // Private helper methods
-  private generateConversationId(): string {
-    return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
   private isValidConversation(conv: any): conv is ChatConversation {
     return (
       conv &&
@@ -284,7 +280,6 @@ export const chatStorageService = new ChatStorageService();
 // Auto-cleanup on page load (once per day)
 const lastCleanupKey = 'chat_last_auto_cleanup';
 const lastCleanup = localStorage.getItem(lastCleanupKey);
-console.log("🚀 ~ chatStorage.service.ts:287 ~ lastCleanup:", lastCleanup)
 const now = new Date();
 const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 

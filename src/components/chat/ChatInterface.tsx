@@ -4,9 +4,11 @@ import { MessageType, MessageStatus } from '../../types/chat.types';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { n8nService } from '../../services/n8nService';
+import { v4 as uuidV4 } from 'uuid';
 
 interface ChatInterfaceProps {
   componentId?: string;
+  conversationId?: string;
   onSendMessage?: (content: string, attachments?: FileAttachment[]) => Promise<void>;
   initialMessages?: ChatMessage[];
   isConnected?: boolean;
@@ -17,6 +19,7 @@ interface ChatInterfaceProps {
 
 export function ChatInterface({
   componentId,
+  conversationId,
   onSendMessage,
   initialMessages = [],
   isConnected = true,
@@ -29,6 +32,10 @@ export function ChatInterface({
   const [queueItems, setQueueItems] = useState<Map<number, QueueItem>>(new Map());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -44,12 +51,14 @@ export function ChatInterface({
 
     // Create user message
     const userMessage: ChatMessage = {
-      id: generateMessageId(),
+      id: uuidV4(),
       content,
       role: 'user',
-      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       type: MessageType.TEXT,
-      status: MessageStatus.SENDING
+      status: MessageStatus.SENDING,
+      conversationId: conversationId!,
     };
 
     // Add user message to chat
@@ -71,62 +80,6 @@ export function ChatInterface({
       if (onSendMessage) {
         // Use custom handler if provided
         await onSendMessage(content, attachments);
-      } else if (componentId) {
-        // Use N8N queue system for component modification
-        const conversationId = n8nService.generateConversationId(componentId);
-        
-        const response = await n8nService.sendChatMessage({
-          componentId,
-          conversationId,
-          message: content,
-          messageType: MessageType.TEXT,
-          metadata: {
-            framework: 'react',
-            language: 'typescript'
-          }
-        });
-
-        if (response.success && response.queueId) {
-          // Add queue status message
-          const queueMessage: ChatMessage = {
-            id: generateMessageId(),
-            content: response.content,
-            role: 'assistant',
-            timestamp: new Date().toISOString(),
-            type: response.type,
-            status: MessageStatus.RECEIVED,
-            metadata: {
-              componentId,
-              queueId: response.queueId
-            }
-          };
-
-          setMessages(prev => [...prev, queueMessage]);
-
-          // Store queue item for potential polling
-          if (response.queueId) {
-            setQueueItems(prev => {
-              const newMap = new Map(prev.set(response.queueId!, {
-                id: response.queueId!,
-                componentId,
-                conversationId,
-                message: content,
-                messageType: MessageType.TEXT,
-                status: 'pending',
-                priority: 5,
-                createdAt: new Date().toISOString(),
-                retryCount: 0,
-                metadata: {}
-              }));
-              
-              // Log for debugging - could be used for queue polling in the future
-              console.log(`Queue item stored for polling:`, Array.from(newMap.keys()));
-              return newMap;
-            });
-          }
-        } else {
-          throw new Error(response.error || 'Failed to enqueue request');
-        }
       } else {
         // Fallback to simulation
         await simulateAIResponse(content);
@@ -173,32 +126,31 @@ export function ChatInterface({
 
   const addAIMessage = (content: string, type: MessageType = MessageType.TEXT) => {
     const aiMessage: ChatMessage = {
-      id: generateMessageId(),
+      id: uuidV4(),
       content,
       role: 'assistant',
-      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       type,
-      status: MessageStatus.RECEIVED
+      status: MessageStatus.RECEIVED,
+      conversationId: conversationId!,
     };
 
     setMessages(prev => [...prev, aiMessage]);
   };
 
-  const generateMessageId = (): string => {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  };
-
   const welcomeMessage = componentId && messages.length === 0 ? {
-    id: 'welcome',
+    id: uuidV4(),
     content: `Hi! I'm here to help you modify the ${componentId} component. You can ask me to change styling, add functionality, or update content. What would you like to do?`,
     role: 'assistant' as const,
-    timestamp: new Date().toISOString(),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     type: MessageType.SYSTEM,
-    status: MessageStatus.RECEIVED
+    status: MessageStatus.RECEIVED,
+    conversationId: conversationId || '',
   } : null;
 
   const allMessages = welcomeMessage ? [welcomeMessage, ...messages] : messages;
-  // console.log("🚀 ~ ChatInterface.tsx:201 ~ ChatInterface ~ allMessages:", allMessages)
 
   return (
     <div className={`flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm ${className}`}>
@@ -268,14 +220,14 @@ export function ChatInterface({
       {/* Input Area */}
       <ChatInput
         onSendMessage={handleSendMessage}
-        // disabled={disabled || !isConnected}
-        // placeholder={
-        //   !isConnected 
-        //     ? "Disconnected - trying to reconnect..." 
-        //     : disabled 
-        //     ? "Chat is disabled"
-        //     : "Ask me to modify this component..."
-        // }
+        disabled={disabled || !isConnected}
+        placeholder={
+          !isConnected 
+            ? "Disconnected - trying to reconnect..." 
+            : disabled 
+            ? "Chat is disabled"
+            : "Ask me to modify this component..."
+        }
         isTyping={isTyping}
         allowAttachments={true}
       />

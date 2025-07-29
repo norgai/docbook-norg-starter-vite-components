@@ -2,12 +2,16 @@
 
 export interface ChatMessage {
   id: string;
+  conversationId: string;
   content: string;
   role: 'user' | 'assistant';
-  timestamp: string;
-  type?: MessageType;
+  type: MessageType;
   metadata?: MessageMetadata;
-  status?: MessageStatus;
+  status: MessageStatus;
+  createdAt: string;
+  updatedAt: string;
+  queue?: QueueItem;
+  attachment?: FileAttachment;
 }
 
 export const MessageType = {
@@ -58,6 +62,7 @@ export interface ChatConversation {
   createdAt: string;
   updatedAt: string;
   status: ConversationStatus;
+  syncAt?: string;
 }
 
 export const ConversationStatus = {

@@ -1,6 +1,8 @@
 // N8N Queue Integration Service - Updated for Queue System
-import { MessageType } from '../types/chat.types';
-import type { N8NResponse, EnqueueResponse, QueueItem } from '../types/chat.types';
+import { MessageType } from "../types/chat.types";
+import { v4 as uuidV4 } from "uuid";
+import type { N8NResponse, EnqueueResponse, QueueItem, ChatConversation, ChatMessage } from "../types/chat.types";
+import { ApiChatbotAction } from "../types/chatApi.types";
 
 export interface N8NWebhookConfig {
   baseUrl: string;
@@ -15,8 +17,8 @@ export interface N8NChatRequest {
   messageType: MessageType;
   attachments?: File[];
   metadata?: {
-    framework: 'react';
-    language: 'typescript';
+    framework: "react";
+    language: "typescript";
     currentCode?: string;
   };
 }
@@ -41,7 +43,7 @@ class N8NService {
   constructor(config: N8NWebhookConfig) {
     this.config = {
       timeout: 30000,
-      ...config
+      ...config,
     };
   }
 
@@ -58,34 +60,33 @@ class N8NService {
         messageType: request.messageType,
         priority: 5,
         metadata: {
-          framework: request.metadata?.framework || 'react',
-          language: request.metadata?.language || 'typescript',
+          framework: request.metadata?.framework || "react",
+          language: request.metadata?.language || "typescript",
           timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent
-        }
+          userAgent: navigator.userAgent,
+        },
       });
 
       if (enqueueResponse.success && enqueueResponse.data?.queueId) {
         return {
           success: true,
-          content: enqueueResponse.message || 'Your request has been queued for processing',
+          content: enqueueResponse.message || "Your request has been queued for processing",
           type: MessageType.TEXT,
-          queueId: enqueueResponse.data.queueId
+          queueId: enqueueResponse.data.queueId,
         };
       } else {
-        throw new Error(enqueueResponse.message || 'Failed to enqueue request');
+        throw new Error(enqueueResponse.message || "Failed to enqueue request");
+      }
+    } catch (error: unknown) {
+      console.error("N8N Service Error:", error);
+
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+
+      if (errorMessage.includes("timeout") || errorMessage.includes("AbortError")) {
+        throw new Error("Request timeout - N8N service took too long to respond");
       }
 
-    } catch (error: unknown) {
-      console.error('N8N Service Error:', error);
-      
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
-      if (errorMessage.includes('timeout') || errorMessage.includes('AbortError')) {
-        throw new Error('Request timeout - N8N service took too long to respond');
-      }
-      
-      throw new Error(errorMessage || 'Failed to communicate with N8N service');
+      throw new Error(errorMessage || "Failed to communicate with N8N service");
     }
   }
 
@@ -100,15 +101,18 @@ class N8NService {
     priority?: number;
     metadata?: Record<string, unknown>;
   }): Promise<EnqueueResponse> {
-    const url = `${this.config.baseUrl}${this.config.webhookPath}?action=enqueue`;
-    
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.QUEUE_ENQUEUE,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
     const payload = {
       componentId: request.componentId,
       conversationId: request.conversationId,
       message: request.message,
       messageType: request.messageType,
       priority: request.priority || 5,
-      metadata: JSON.stringify(request.metadata || {})
+      metadata: JSON.stringify(request.metadata || {}),
     };
 
     const response = await this.makeRequest<EnqueueResponse>(url, payload);
@@ -119,10 +123,13 @@ class N8NService {
    * Get queue item status by ID
    */
   async getQueueItemStatus(queueId: number): Promise<N8NResponse<QueueItem>> {
-    const url = `${this.config.baseUrl}${this.config.webhookPath}?action=get-item`;
-    
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.QUEUE_GET_ITEM,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
     const payload = {
-      queueItemId: queueId
+      queueItemId: queueId,
     };
 
     const response = await this.makeRequest<N8NResponse<QueueItem>>(url, payload);
@@ -133,10 +140,13 @@ class N8NService {
    * Get all queue items for a component
    */
   async getQueueByComponentId(componentId: string): Promise<N8NResponse<QueueItem[]>> {
-    const url = `${this.config.baseUrl}${this.config.webhookPath}?action=get-by-component-id`;
-    
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.QUEUE_GET_BY_COMPONENT_ID,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
     const payload = {
-      componentId: componentId
+      componentId: componentId,
     };
 
     const response = await this.makeRequest<N8NResponse<QueueItem[]>>(url, payload);
@@ -144,46 +154,119 @@ class N8NService {
   }
 
   /**
-   * Generate conversation ID for component
+   * Get conversations from API
    */
-  generateConversationId(componentId: string): string {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substr(2, 9);
-    return `conv_${componentId}_${timestamp}_${random}`;
+  async getConversations(componentId?: string): Promise<ChatConversation[]> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.CONVERSATION_LIST,
+      componentId: componentId || "",
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
+    const response = await this.makeRequest<N8NResponse<{ conversations: ChatConversation[]; count: number }>>(url, {});
+    return response.data?.conversations || [];
+  }
+
+  /**
+   * Get single conversation from API
+   */
+  async getConversation(conversationId: string): Promise<ChatConversation> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.CONVERSATION_GET,
+      conversationId: conversationId,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
+    const response = await this.makeRequest<N8NResponse<ChatConversation>>(url, {});
+    if (!response.data) {
+      throw new Error(`Conversation ${conversationId} not found`);
+    }
+    return response.data;
+  }
+
+  /**
+   * Create new conversation via API
+   */
+  async createConversation(componentId: string, title?: string): Promise<ChatConversation> {
+    const conversationId = uuidV4();
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.CONVERSATION_CREATE,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+    const payload = {
+      conversationId,
+      componentId,
+      title: title || `Chat ${new Date().toLocaleString()}`,
+      status: "active",
+    };
+
+    const response = await this.makeRequest<N8NResponse<{ conversationId: string }>>(url, payload);
+
+    if (!response.data?.conversationId) {
+      throw new Error("Failed to create conversation: Invalid response");
+    }
+
+    // Return the created conversation by fetching it
+    return await this.getConversation(response.data.conversationId);
+  }
+
+  /**
+   * Get messages for a conversation from API
+   */
+  async getMessages(conversationId: string): Promise<ChatMessage[]> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.MESSAGE_LIST,
+      conversationId: conversationId,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
+    const response = await this.makeRequest<N8NResponse<{ messages: ChatMessage[] }>>(url, {});
+    return response?.data?.messages || [];
+  }
+
+  /**
+   * Get single message from API
+   */
+  async getMessage(messageId: string): Promise<ChatMessage> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.MESSAGE_GET,
+      messageId: messageId,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+
+    const response = await this.makeRequest<N8NResponse<ChatMessage>>(url, {});
+    if (!response.data) {
+      throw new Error(`Message ${messageId} not found`);
+    }
+    return response.data;
   }
 
   /**
    * Generic method to make requests to N8N API
    */
-  private async makeRequest<T>(url: string, data: unknown): Promise<T> {
+  private async makeRequest<T>(path: string, data: unknown): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
     try {
-      const response = await fetch(url, {
-        method: 'POST',
+      const response = await fetch(`${this.config.baseUrl}${path}`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
       const result = await response.json();
-      console.log("🚀 ~ n8nService.ts:179 ~ N8NService ~ makeRequest ~ result:", result)
-      
-      if (!result.success) {
-        throw new Error(result.message || 'Request failed');
+
+      if (!result?.success) {
+        throw new Error(result.message || "Request failed");
       }
 
       return result as T;
-
     } catch (error) {
       clearTimeout(timeoutId);
       throw error;
@@ -199,10 +282,10 @@ class N8NService {
         const base64 = reader.result as string;
         resolve({
           url: base64,
-          fileId: `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+          fileId: `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         });
       };
-      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.onerror = () => reject(new Error("Failed to read file"));
       reader.readAsDataURL(file);
     });
   }
@@ -210,24 +293,30 @@ class N8NService {
   // Test queue connectivity
   async testConnection(): Promise<boolean> {
     try {
+      const queryParams = this.buildQueryParams({
+        action: ApiChatbotAction.HEALTH_STATUS,
+      });
       const response = await this.makeRequest<N8NResponse>(
-        `${this.config.baseUrl}${this.config.webhookPath}?action=health`,
+        `${this.config.webhookPath}?${queryParams}`,
         {}
       );
-      console.log("🚀 ~ n8nService.ts:216 ~ N8NService ~ testConnection ~ response:", response)
 
       return response.success;
     } catch (error) {
-      console.warn('N8N connection test failed:', error);
+      console.warn("N8N connection test failed:", error);
       return false;
     }
+  }
+
+  buildQueryParams(params: Record<string, string>): string {
+    return new URLSearchParams(params).toString();
   }
 }
 
 // Default configuration - can be overridden via environment variables
 const defaultConfig: N8NWebhookConfig = {
-  baseUrl: import.meta.env.VITE_N8N_BASE_URL || 'http://localhost:5678',
-  webhookPath: import.meta.env.VITE_N8N_WEBHOOK_PATH || '/webhook/chatbot'
+  baseUrl: import.meta.env.VITE_N8N_BASE_URL || "http://localhost:5678",
+  webhookPath: import.meta.env.VITE_N8N_WEBHOOK_PATH || "/webhook/chatbot",
 };
 
 export const n8nService = new N8NService(defaultConfig);

@@ -49,19 +49,21 @@ export function MessageBubble({
               : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
           }`}>
             <MessageContent message={message} />
-            
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-1">
+            {/* Timestamp */}
+            {showTimestamp && (
+              <div className={`text-xs text-gray-500 ${isUser ? 'text-right' : 'text-left'}`}>
+                {formatTimestamp(message.createdAt)}
+              </div>
+            )}
+
             {/* Status indicator for user messages */}
             {isUser && message.status && (
               <MessageStatusIndicator status={message.status} />
             )}
           </div>
-
-          {/* Timestamp */}
-          {showTimestamp && (
-            <div className={`text-xs text-gray-500 mt-1 ${isUser ? 'text-right' : 'text-left'}`}>
-              {formatTimestamp(message.timestamp)}
-            </div>
-          )}
 
           {/* Metadata */}
           {message.metadata && (
@@ -146,7 +148,7 @@ function MessageStatusIndicator({ status }: { status: MessageStatus }) {
 
   return (
     <div 
-      className={`absolute -bottom-4 right-0 text-xs ${statusInfo.color}`}
+      className={`text-xs ${statusInfo.color}`}
       title={statusInfo.title}
     >
       {statusInfo.icon}
