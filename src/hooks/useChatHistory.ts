@@ -1,45 +1,56 @@
-import { useState, useEffect, useCallback } from "react";
-import { ConversationStatus, type ChatConversation, type ChatMessage } from "../types/chat.types";
+import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  ConversationStatus,
+  type ChatConversation,
+  type ChatMessage,
+  type ChatMessageRequest,
+} from "../types/chat.types";
 import { chatStorageService } from "../services/chatStorage.service";
 import { n8nService } from "../services/n8nService";
 import dayjs from "dayjs";
 
 export function useChatHistory(componentId: string) {
-  console.log("🚀 ~ useChatHistory.ts:6 ~ useChatHistory ~ componentId:", componentId);
   const [conversation, setConversation] = useState<ChatConversation | null>(null);
   const [loading, setLoading] = useState(true);
+  const initialized = useRef(false);
 
   // Create new conversation
-  const createConversation = useCallback((compId: string, title?: string) => {
-    const newConversation = chatStorageService.createConversation(compId, title);
+  const createConversation = useCallback((compId: string) => {
+    const newConversation = chatStorageService.createConversation(compId);
+    n8nService.createConversation(compId, newConversation.id, newConversation.title);
+    setConversation(newConversation);
     return newConversation;
   }, []);
 
   // Add message to conversation
-  const addMessage = useCallback((conversationId: string, message: ChatMessage) => {
-    const updatedConversation = chatStorageService.addMessage(conversationId, message);
+  const addMessage = useCallback((conversationId: string, message: ChatMessageRequest) => {
+    const updatedConversation = chatStorageService.addMessage(conversationId, {
+      ...message,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    setConversation(updatedConversation);
     return updatedConversation;
   }, []);
 
   // Update message in conversation
   const updateMessage = useCallback((conversationId: string, messageId: string, updates: Partial<ChatMessage>) => {
     const updatedConversation = chatStorageService.updateMessage(conversationId, messageId, updates);
+    setConversation(updatedConversation);
     return updatedConversation;
   }, []);
 
   // Delete conversation
   const deleteConversation = useCallback((conversationId: string) => {
     chatStorageService.deleteConversation(conversationId);
+    setConversation(null);
   }, []);
 
   // Clear all conversations
   const clearAllConversations = useCallback(() => {
     chatStorageService.clearAllConversations();
+    setConversation(null);
   }, []);
-
-  // Get or create conversation for component
-  // const getOrCreateConversation = useCallback((compId: string) => {
-  // }, [componentConversations, createConversation]);
 
   // Export conversations
   const exportConversations = useCallback(() => {
@@ -59,51 +70,64 @@ export function useChatHistory(componentId: string) {
 
   /**
    * Sync existing conversation and its messages with API
-   * 
+   *
    */
-  const syncExistingConversation = useCallback(async (conversationId: string, compId: string): Promise<ChatConversation> => {
-    try {
-      // Get conversation by conversationId from API
-      const apiConversation = await n8nService.getConversation(conversationId);
-      
-      // Check if record.status = active
-      if (apiConversation.status === ConversationStatus.ACTIVE) {
-        // Continue get messages -> after get message set to localStorage with conversationId
-        const messages = await n8nService.getMessages(conversationId);
-        
-        // Update conversation with messages and sync timestamp
-        const updatedConversation: ChatConversation = {
-          ...apiConversation,
-          messages,
-          syncAt: new Date().toISOString()
-        };
-        
-        // Save to localStorage
-        chatStorageService.saveConversation(updatedConversation);
-        return updatedConversation;
-      }
+  const syncExistingConversation = useCallback(
+    async (conversationId: string, compId: string): Promise<ChatConversation> => {
+      try {
+        // Get conversation by conversationId from API
+        const apiConversation = await n8nService.getConversation(conversationId);
 
-      // Status is not active -> remove conversation from localStorage -> create new conversation
-      chatStorageService.deleteConversation(conversationId);
-      return chatStorageService.createConversation(compId);
-    } catch (error) {
-      console.error('Error syncing existing conversation:', error);
-      chatStorageService.deleteConversation(conversationId);
-      return chatStorageService.createConversation(compId);
-    }
-  }, []);
+        // Check if record.status = active
+        if (apiConversation.status === ConversationStatus.ACTIVE) {
+          // Continue get messages -> after get message set to localStorage with conversationId
+          const messages = await n8nService.getMessages(conversationId);
+
+          // Update conversation with messages and sync timestamp
+          const updatedConversation: ChatConversation = {
+            ...apiConversation,
+            messages,
+            syncAt: new Date().toISOString(),
+          };
+
+          // Save to localStorage
+          chatStorageService.saveConversation(updatedConversation);
+          return updatedConversation;
+        }
+
+        // Status is not active -> remove conversation from localStorage -> create new conversation
+        const newConversation = chatStorageService.createConversation(compId);
+        n8nService.createConversation(compId, newConversation.id, newConversation.title);
+        return newConversation;
+      } catch (error) {
+        console.error("Error syncing existing conversation:", error);
+        chatStorageService.deleteConversation(conversationId);
+        const newConversation = chatStorageService.createConversation(compId);
+        n8nService.createConversation(compId, newConversation.id, newConversation.title);
+        return newConversation;
+      }
+    },
+    []
+  );
 
   useEffect(() => {
+    if (!componentId) return;
+
+    if (initialized.current) return;
+
+    initialized.current = true;
+
     const initializeConversation = async () => {
       try {
         // Look for existing active conversation for this component
         const conversations = await chatStorageService.loadConversations();
         let conversation = Array.from(conversations.values()).find(
-          (conversation) => conversation.componentId === componentId && conversation.status === ConversationStatus.ACTIVE
+          (conversation) =>
+            conversation.componentId === componentId && conversation.status === ConversationStatus.ACTIVE
         );
 
         if (conversation) {
-          const isDataExpired = dayjs(conversation?.syncAt).isBefore(dayjs().subtract(15, 'minute'));
+          const isDataExpired = dayjs(conversation?.syncAt).isBefore(dayjs().subtract(15, "minute"));
           if (isDataExpired) {
             // Background sync with API
             conversation = await syncExistingConversation(conversation.id, componentId);
@@ -112,37 +136,36 @@ export function useChatHistory(componentId: string) {
           return;
         }
         const apiConversations = await n8nService.getConversations(componentId);
-        
         // Sort by createdAt desc and filter active conversations
         const activeConversations = apiConversations
-          .filter(record => record.status === ConversationStatus.ACTIVE)
+          .filter((record) => record.status === ConversationStatus.ACTIVE)
           .sort((a, b) => {
             const timeA = new Date(a.createdAt || 0).getTime();
             const timeB = new Date(b.createdAt || 0).getTime();
             return timeB - timeA; // desc order
           });
-        
+
         if (activeConversations.length > 0) {
           // Found active conversation from API
           const foundConversation = activeConversations[0];
-          
+
           // Get messages for this conversation
           const messages = await n8nService.getMessages(foundConversation.id);
-          
+
           // Update conversation with messages and sync timestamp
           const updatedConversation: ChatConversation = {
             ...foundConversation,
             messages,
-            syncAt: new Date().toISOString()
+            syncAt: new Date().toISOString(),
           };
-          
+
           // Save to localStorage
           chatStorageService.saveConversation(updatedConversation);
           setConversation(updatedConversation);
           return;
         }
-        const newConversation = chatStorageService.createConversation(componentId);
-        setConversation(newConversation);
+        createConversation(componentId);
+        return;
       } finally {
         setLoading(false);
       }

@@ -331,9 +331,12 @@ export const ApiChatbotAction = {
   CONVERSATION_LIST: 'conversation_list',
   CONVERSATION_GET: 'conversation_get',
   CONVERSATION_CREATE: 'conversation_create',
+  CONVERSATION_UPDATE: 'conversation_update',
 
   MESSAGE_LIST: 'message_list',
   MESSAGE_GET: 'message_get',
+  MESSAGE_CREATE: 'message_create',
+  MESSAGE_UPDATE: 'message_update',
 
   QUEUE_ENQUEUE: 'queue_enqueue',
   QUEUE_GET_ITEM: 'queue_get',

@@ -1,10 +1,16 @@
 // Chat interface types for AI-powered component modifications
+export const MessageRole = {
+  USER: 'user',
+  ASSISTANT: 'assistant',
+} as const;
+
+export type MessageRole = typeof MessageRole[keyof typeof MessageRole];
 
 export interface ChatMessage {
   id: string;
   conversationId: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: MessageRole;
   type: MessageType;
   metadata?: MessageMetadata;
   status: MessageStatus;
@@ -13,6 +19,8 @@ export interface ChatMessage {
   queue?: QueueItem;
   attachment?: FileAttachment;
 }
+
+export type ChatMessageRequest = Omit<ChatMessage, 'createdAt' | 'updatedAt'>
 
 export const MessageType = {
   TEXT: 'text',
@@ -44,6 +52,7 @@ export interface MessageMetadata {
   errorDetails?: string;
   codeChanges?: ComponentChangePreview[];
   n8nResponse?: boolean;
+  prUrl?: string;
   queueId?: number;
 }
 
@@ -121,13 +130,23 @@ export interface ChatSettings {
 }
 
 // N8N Queue Integration Types
+export const QueueStatus = {
+  PENDING: 'pending',
+  PROCESSING: 'processing',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+} as const;
+
+export type QueueStatus = typeof QueueStatus[keyof typeof QueueStatus];
+
 export interface QueueItem {
-  id: number;
+  id: string;
   componentId: string;
   conversationId: string;
+  messageId: string;
   message: string;
   messageType: MessageType;
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  status: QueueStatus;
   priority: number;
   createdAt: string;
   startedAt?: string;
@@ -139,13 +158,20 @@ export interface QueueItem {
   metadata: Record<string, unknown>;
 }
 
+export interface EnqueueRequest {
+  id: string;
+  componentId: string;
+  conversationId: string;
+  messageId: string;
+  message: string;
+  messageType?: MessageType;
+  priority?: number;
+  metadata?: Record<string, unknown>;
+}
+
 export interface N8NResponse<T = unknown> {
   success: boolean;
   operation: string;
   message?: string;
   data?: T;
-}
-
-export interface EnqueueResponse extends N8NResponse<{ queueId: number }> {
-  operation: 'enqueue';
 }

@@ -6,6 +6,7 @@ import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
 import { ProgressIndicator } from '../progress/ProgressIndicator';
 import { VersionHistory, VersionTimeline } from '../version';
 import { useVersionManagement } from '../../hooks/useVersionManagement';
+import { QueueStatusList } from '../queue/QueueStatusList';
 
 interface ComponentDetailViewProps {
   component: ComponentMetadata;
@@ -18,7 +19,6 @@ export function ComponentDetailView({ component, onEdit }: ComponentDetailViewPr
   
   // Initialize chat functionality if enabled
   const chatFlow = useChatFlow(component.id);
-  console.count("🚀 ~ ComponentDetailView.tsx:22 ~ ComponentDetailView ~ chatFlow:")
 
   //TODO: implement realTimeUpdates later, comment to prevent re-render component multiple times
   // Initialize real-time updates
@@ -478,14 +478,18 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
         </div>
       )}
 
+      {/* Queue Status */}
+      <QueueStatusList queues={chatFlow.queues} />
+
       <div className="border border-gray-200 rounded-lg overflow-hidden">
         <ChatInterface
           componentId={component.id}
           conversationId={chatFlow.conversation?.id}
           initialMessages={chatFlow.conversation?.messages || []}
-          // onSendMessage={chatFlow.sendMessage}
-          // isConnected={chatFlow.isConnected && realTimeUpdates?.isConnected}
-          isConnected={chatFlow.isConnected}
+          isTyping={chatFlow.isTyping}
+          onSendMessage={chatFlow.sendMessage}
+          onDeleteConversation={chatFlow.deleteConversation}
+          isConnected={chatFlow.isConnected && realTimeUpdates?.isConnected}
           disabled={!chatFlow.isConnected}
           height="500px"
         />

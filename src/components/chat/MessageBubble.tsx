@@ -1,5 +1,5 @@
 import type { ChatMessage, MessageMetadata } from '../../types/chat.types';
-import { MessageType, MessageStatus } from '../../types/chat.types';
+import { MessageType, MessageStatus, MessageRole } from '../../types/chat.types';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -13,7 +13,7 @@ export function MessageBubble({
   showTimestamp = true,
   className = ""
 }: MessageBubbleProps) {
-  const isUser = message.role === 'user';
+  const isUser = message.role === MessageRole.USER;
   const isSystem = message.type === MessageType.SYSTEM;
 
   if (isSystem) {

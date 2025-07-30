@@ -1,7 +1,15 @@
 // N8N Queue Integration Service - Updated for Queue System
-import { MessageType } from "../types/chat.types";
 import { v4 as uuidV4 } from "uuid";
-import type { N8NResponse, EnqueueResponse, QueueItem, ChatConversation, ChatMessage } from "../types/chat.types";
+import type {
+  ChatConversation,
+  ChatMessage,
+  ChatMessageRequest,
+  EnqueueRequest,
+  MessageRole,
+  N8NResponse,
+  QueueItem,
+} from "../types/chat.types";
+import { MessageStatus, MessageType } from "../types/chat.types";
 import { ApiChatbotAction } from "../types/chatApi.types";
 
 export interface N8NWebhookConfig {
@@ -48,91 +56,16 @@ class N8NService {
   }
 
   /**
-   * Send chat message via queue system
+   * Get queue item by ID
    */
-  async sendChatMessage(request: N8NChatRequest): Promise<N8NChatResponse> {
-    try {
-      // Enqueue the request
-      const enqueueResponse = await this.enqueueRequest({
-        componentId: request.componentId,
-        conversationId: request.conversationId,
-        message: request.message,
-        messageType: request.messageType,
-        priority: 5,
-        metadata: {
-          framework: request.metadata?.framework || "react",
-          language: request.metadata?.language || "typescript",
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-        },
-      });
-
-      if (enqueueResponse.success && enqueueResponse.data?.queueId) {
-        return {
-          success: true,
-          content: enqueueResponse.message || "Your request has been queued for processing",
-          type: MessageType.TEXT,
-          queueId: enqueueResponse.data.queueId,
-        };
-      } else {
-        throw new Error(enqueueResponse.message || "Failed to enqueue request");
-      }
-    } catch (error: unknown) {
-      console.error("N8N Service Error:", error);
-
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-
-      if (errorMessage.includes("timeout") || errorMessage.includes("AbortError")) {
-        throw new Error("Request timeout - N8N service took too long to respond");
-      }
-
-      throw new Error(errorMessage || "Failed to communicate with N8N service");
-    }
-  }
-
-  /**
-   * Enqueue a component modification request
-   */
-  async enqueueRequest(request: {
-    componentId: string;
-    conversationId: string;
-    message: string;
-    messageType: MessageType;
-    priority?: number;
-    metadata?: Record<string, unknown>;
-  }): Promise<EnqueueResponse> {
-    const queryParams = this.buildQueryParams({
-      action: ApiChatbotAction.QUEUE_ENQUEUE,
-    });
-    const url = `${this.config.webhookPath}?${queryParams}`;
-
-    const payload = {
-      componentId: request.componentId,
-      conversationId: request.conversationId,
-      message: request.message,
-      messageType: request.messageType,
-      priority: request.priority || 5,
-      metadata: JSON.stringify(request.metadata || {}),
-    };
-
-    const response = await this.makeRequest<EnqueueResponse>(url, payload);
-    return response;
-  }
-
-  /**
-   * Get queue item status by ID
-   */
-  async getQueueItemStatus(queueId: number): Promise<N8NResponse<QueueItem>> {
+  async getQueueItem(queueId: string): Promise<N8NResponse<QueueItem>> {
     const queryParams = this.buildQueryParams({
       action: ApiChatbotAction.QUEUE_GET_ITEM,
+      queueId: queueId,
     });
     const url = `${this.config.webhookPath}?${queryParams}`;
 
-    const payload = {
-      queueItemId: queueId,
-    };
-
-    const response = await this.makeRequest<N8NResponse<QueueItem>>(url, payload);
+    const response = await this.makeRequest<N8NResponse<QueueItem>>(url, {});
     return response;
   }
 
@@ -187,8 +120,7 @@ class N8NService {
   /**
    * Create new conversation via API
    */
-  async createConversation(componentId: string, title?: string): Promise<ChatConversation> {
-    const conversationId = uuidV4();
+  async createConversation(componentId: string, conversationId: string, title?: string): Promise<ChatConversation> {
     const queryParams = this.buildQueryParams({
       action: ApiChatbotAction.CONVERSATION_CREATE,
     });
@@ -198,6 +130,7 @@ class N8NService {
       componentId,
       title: title || `Chat ${new Date().toLocaleString()}`,
       status: "active",
+      metadata: {}
     };
 
     const response = await this.makeRequest<N8NResponse<{ conversationId: string }>>(url, payload);
@@ -208,6 +141,22 @@ class N8NService {
 
     // Return the created conversation by fetching it
     return await this.getConversation(response.data.conversationId);
+  }
+
+  /**
+   * Update conversation status via API
+   */
+  async updateConversation(conversationId: string, status: string): Promise<void> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.CONVERSATION_UPDATE,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+    const payload = {
+      conversationId: conversationId,
+      status: status,
+    };
+
+    await this.makeRequest<N8NResponse>(url, payload);
   }
 
   /**
@@ -239,6 +188,91 @@ class N8NService {
       throw new Error(`Message ${messageId} not found`);
     }
     return response.data;
+  }
+
+  /**
+   * Create message in API - sync user messages to backend
+   */
+  async createMessage(message: ChatMessageRequest): Promise<ChatMessage> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.MESSAGE_CREATE,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+    const payload = {
+      messageId: message.id,
+      conversationId: message.conversationId,
+      content: message.content,
+      role: message.role,
+      type: message.type || "text",
+      status: message.status || "sent",
+      metadata: message.metadata || {},
+    };
+
+    const response = await this.makeRequest<N8NResponse<{ messageId: string }>>(url, payload);
+
+    if (!response.success) {
+      throw new Error(response?.message || "Failed to send message: Invalid response");
+    }
+
+    // Create proper ChatMessage object
+    const chatMessage: ChatMessage = {
+      id: message.id,
+      content: message.content,
+      role: message.role as MessageRole,
+      type: (message.type as MessageType) || MessageType.TEXT,
+      status: (message.status as MessageStatus) || MessageStatus.SENT,
+      conversationId: message.conversationId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      metadata: message.metadata,
+    };
+
+    return chatMessage;
+  }
+
+  /**
+   * Update message status in API
+   */
+  async updateMessage(messageId: string, status: MessageStatus): Promise<void> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.MESSAGE_UPDATE,
+      messageId: messageId,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+    const payload = {
+      messageId: messageId,
+      status: status,
+    };
+
+    await this.makeRequest<N8NResponse>(url, payload);
+  }
+
+  /**
+   * Enqueue message for n8n processing
+   */
+  async enqueue(data: EnqueueRequest): Promise<{ queueId: string }> {
+    const queryParams = this.buildQueryParams({
+      action: ApiChatbotAction.QUEUE_ENQUEUE,
+    });
+    const url = `${this.config.webhookPath}?${queryParams}`;
+    const payload = {
+      id: data.id,
+      componentId: data.componentId,
+      conversationId: data.conversationId,
+      messageId: data.messageId,
+      message: data.message,
+      messageType: data.messageType || MessageType.TEXT,
+      priority: data.priority || 1,
+      metadata: data.metadata || {},
+    };
+
+    const response = await this.makeRequest<N8NResponse<{ queueId: string }>>(url, payload);
+
+    if (!response.success || !response.data?.queueId) {
+      throw new Error(response?.message || "Failed to enqueue message: Invalid response");
+    }
+
+    return { queueId: response.data.queueId };
   }
 
   /**
@@ -296,10 +330,7 @@ class N8NService {
       const queryParams = this.buildQueryParams({
         action: ApiChatbotAction.HEALTH_STATUS,
       });
-      const response = await this.makeRequest<N8NResponse>(
-        `${this.config.webhookPath}?${queryParams}`,
-        {}
-      );
+      const response = await this.makeRequest<N8NResponse>(`${this.config.webhookPath}?${queryParams}`, {});
 
       return response.success;
     } catch (error) {

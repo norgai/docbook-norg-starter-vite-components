@@ -1,11 +1,13 @@
 // Concurrent Request Manager for handling multiple AI requests
-import { websocketService } from './websocketService';
 import { v4 as uuidV4 } from 'uuid';
+import type { EnqueueRequest } from '../types/chat.types';
+import { websocketService } from './websocketService';
+import { n8nService } from './n8nService';
 
 export interface RequestQueue {
   id: string;
   type: 'chat' | 'file-change' | 'validation';
-  payload: any;
+  payload: EnqueueRequest;
   priority: 'low' | 'medium' | 'high';
   timestamp: number;
   retries: number;
@@ -45,7 +47,7 @@ class ConcurrentRequestManager {
   // Add request to queue
   enqueue(
     type: RequestQueue['type'],
-    payload: any,
+    payload: EnqueueRequest,
     options: {
       priority?: RequestQueue['priority'];
       timeout?: number;
@@ -300,17 +302,8 @@ class ConcurrentRequestManager {
 
   private async handleChatRequest(request: RequestQueue): Promise<any> {
     // Send chat request to N8N via WebSocket or HTTP
-    const response = await fetch('http://localhost:5678/webhook/chatbot?action=enqueue', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(request.payload)
-    });
-
-    if (!response.ok) {
-      throw new Error(`Chat request failed: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
+    const response = await n8nService.enqueue(request.payload);
+    return response;
   }
 
   private async handleFileChangeRequest(request: RequestQueue): Promise<any> {
