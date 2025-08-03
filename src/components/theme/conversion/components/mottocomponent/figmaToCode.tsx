@@ -13,7 +13,7 @@ export default function MottoComponent() {
       >
         <div 
           data-layer="Background" 
-          className="w-full h-64 bg-zinc-800" 
+          className="w-full h-64 bg-blue-600" 
         />
         <div 
           data-layer="All new technologies. No apologies." 
