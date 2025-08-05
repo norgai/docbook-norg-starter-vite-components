@@ -1,14 +1,26 @@
 // Chat interface types for AI-powered component modifications
+export const MessageRole = {
+  USER: 'user',
+  ASSISTANT: 'assistant',
+} as const;
+
+export type MessageRole = typeof MessageRole[keyof typeof MessageRole];
 
 export interface ChatMessage {
   id: string;
+  conversationId: string;
   content: string;
-  role: 'user' | 'assistant';
-  timestamp: string;
-  type?: MessageType;
+  role: MessageRole;
+  type: MessageType;
   metadata?: MessageMetadata;
-  status?: MessageStatus;
+  status: MessageStatus;
+  createdAt: string;
+  updatedAt: string;
+  queue?: QueueItem;
+  attachment?: FileAttachment;
 }
+
+export type ChatMessageRequest = Omit<ChatMessage, 'createdAt' | 'updatedAt'>
 
 export const MessageType = {
   TEXT: 'text',
@@ -16,7 +28,7 @@ export const MessageType = {
   IMAGE: 'image',
   COMPONENT: 'component',
   ERROR: 'error',
-  SYSTEM: 'system'
+  SYSTEM: 'system',
 } as const;
 
 export type MessageType = typeof MessageType[keyof typeof MessageType];
@@ -38,8 +50,10 @@ export interface MessageMetadata {
   imageUrl?: string;
   codeLanguage?: string;
   errorDetails?: string;
-  codeChanges?: any[];
+  codeChanges?: ComponentChangePreview[];
   n8nResponse?: boolean;
+  prUrl?: string;
+  queueId?: number;
 }
 
 export interface ComponentChangePreview {
@@ -57,6 +71,7 @@ export interface ChatConversation {
   createdAt: string;
   updatedAt: string;
   status: ConversationStatus;
+  syncAt?: string;
 }
 
 export const ConversationStatus = {
@@ -112,4 +127,51 @@ export interface ChatSettings {
   soundEnabled: boolean;
   maxHistoryLength: number;
   theme: 'light' | 'dark' | 'auto';
+}
+
+// N8N Queue Integration Types
+export const QueueStatus = {
+  PENDING: 'pending',
+  PROCESSING: 'processing',
+  COMPLETED: 'completed',
+  FAILED: 'failed',
+} as const;
+
+export type QueueStatus = typeof QueueStatus[keyof typeof QueueStatus];
+
+export interface QueueItem {
+  id: string;
+  componentId: string;
+  conversationId: string;
+  messageId: string;
+  message: string;
+  messageType: MessageType;
+  status: QueueStatus;
+  priority: number;
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  prUrl?: string;
+  branchName?: string;
+  errorMessage?: string;
+  retryCount: number;
+  metadata: Record<string, unknown>;
+}
+
+export interface EnqueueRequest {
+  id: string;
+  componentId: string;
+  conversationId: string;
+  messageId: string;
+  message: string;
+  messageType?: MessageType;
+  priority?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface N8NResponse<T = unknown> {
+  success: boolean;
+  operation: string;
+  message?: string;
+  data?: T;
 }

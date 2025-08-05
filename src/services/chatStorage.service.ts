@@ -1,5 +1,6 @@
 import type { ChatConversation, ChatMessage } from '../types/chat.types';
 import { ConversationStatus } from '../types/chat.types';
+import { v4 as uuidV4 } from 'uuid';
 
 class ChatStorageService {
   private storageKey = 'chat-conversations';
@@ -64,7 +65,7 @@ class ChatStorageService {
   // Create a new conversation
   createConversation(componentId: string, title?: string): ChatConversation {
     const conversation: ChatConversation = {
-      id: this.generateConversationId(),
+      id: uuidV4(),
       componentId,
       title: title || `Chat with ${componentId}`,
       messages: [],
@@ -234,11 +235,6 @@ class ChatStorageService {
     } catch (error) {
       console.error('Cleanup failed:', error);
     }
-  }
-
-  // Private helper methods
-  private generateConversationId(): string {
-    return `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   private isValidConversation(conv: any): conv is ChatConversation {
