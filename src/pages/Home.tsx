@@ -1,17 +1,17 @@
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 /**
  * Home page component displaying responsive tiles for all conversion theme components
  * Features component thumbnails, names, links, and interactive buttons
  */
 export default function Home() {
-  const [chatOpen, setChatOpen] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   // Component data for the conversion theme
   const components = [
     {
+      id: 'motto-component',
       name: 'MottoComponent',
       displayName: 'Motto Component',
       path: '/components/motto-component',
@@ -40,11 +40,7 @@ export default function Home() {
   };
 
   const handleChat = (componentName: string) => {
-    setChatOpen(componentName);
-  };
-
-  const closeChatWindow = () => {
-    setChatOpen(null);
+    navigate(`/components/${componentName}?tab=chat`);
   };
 
   const getSimilarityColor = (score: number) => {
@@ -122,7 +118,7 @@ export default function Home() {
                     </button>
                     
                     <button
-                      onClick={() => handleChat(component.name)}
+                      onClick={() => handleChat(component.id)}
                       className="flex-1 bg-green-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,47 +160,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      {/* Chat Window Modal */}
-      {chatOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-96">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Chat about {components.find(c => c.name === chatOpen)?.displayName}
-              </h3>
-              <button
-                onClick={closeChatWindow}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-4">
-              <div className="mb-4">
-                <div className="bg-gray-100 rounded-lg p-3 mb-3">
-                  <p className="text-sm text-gray-700">
-                    Hi! I'm here to help you with the {components.find(c => c.name === chatOpen)?.displayName} component. 
-                    What would you like to know or change?
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Type your message..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                  Send
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

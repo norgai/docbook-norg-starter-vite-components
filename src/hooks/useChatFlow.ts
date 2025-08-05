@@ -231,13 +231,13 @@ export function useChatFlow(componentId: string) {
     checkConnection();
 
     // Set up periodic checks
-    // const connectionInterval = setInterval(checkConnection, 30000); // Check every 30 seconds
+    const connectionInterval = setInterval(checkConnection, 30000); // Check every 30 seconds
 
     window.addEventListener("online", checkConnection);
     window.addEventListener("offline", checkConnection);
 
     return () => {
-      // clearInterval(connectionInterval);
+      clearInterval(connectionInterval);
       window.removeEventListener("online", checkConnection);
       window.removeEventListener("offline", checkConnection);
     };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ComponentMetadata } from '../../types/component.types';
 import { ChatInterface } from '../chat/ChatInterface';
 import { useChatFlow } from '../../hooks/useChatFlow';
@@ -7,6 +7,7 @@ import { ProgressIndicator } from '../progress/ProgressIndicator';
 // import { VersionHistory, VersionTimeline } from '../version';
 // import { useVersionManagement } from '../../hooks/useVersionManagement';
 import { QueueStatusList } from '../queue/QueueStatusList';
+import { useSearchParams } from 'react-router-dom';
 
 interface ComponentDetailViewProps {
   component: ComponentMetadata;
@@ -14,8 +15,11 @@ interface ComponentDetailViewProps {
   onChat?: () => void;
 }
 
+type Tab = 'overview' | 'props' | 'examples' | 'usage' | 'chat' | 'versions';
+
 export function ComponentDetailView({ component, onEdit }: ComponentDetailViewProps) {
-  const [activeTab, setActiveTab] = useState<'overview' | 'props' | 'examples' | 'usage' | 'chat' | 'versions'>('chat');
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>('overview');
   
   // Initialize chat functionality if enabled
   const chatFlow = useChatFlow(component.id);
@@ -45,14 +49,23 @@ export function ComponentDetailView({ component, onEdit }: ComponentDetailViewPr
   // Initialize version management
   // const versionManagement = useVersionManagement(component.id);
 
-  const tabs = [
+  const tabs = useMemo(() => [
     { id: 'overview', label: 'Overview' },
     { id: 'props', label: 'Props' },
     { id: 'examples', label: 'Examples' },
     { id: 'usage', label: 'Usage' },
     { id: 'versions', label: 'Versions' },
     ...(component.chatEnabled ? [{ id: 'chat', label: 'AI Chat' }] : [])
-  ];
+  ], [component.chatEnabled]);
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab) {
+      if (tabs.find(t => t.id === tab)) {
+        setActiveTab(tab as Tab);
+      }
+    }
+  }, [searchParams, tabs]);
 
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
