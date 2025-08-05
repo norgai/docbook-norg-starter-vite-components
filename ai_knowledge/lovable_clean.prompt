@@ -1,4 +1,0 @@
-Task: You are an expert UI designer who has knack for identifying the components that make up a page. 
-Go through all the components and pages in this lovable site and update data attributes as shown below.
-
-Remove all attributes:  data-norg-name data-norg-wrapper

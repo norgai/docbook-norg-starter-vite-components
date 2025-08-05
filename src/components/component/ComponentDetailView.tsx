@@ -4,8 +4,8 @@ import { ChatInterface } from '../chat/ChatInterface';
 import { useChatFlow } from '../../hooks/useChatFlow';
 import { useRealTimeUpdates } from '../../hooks/useRealTimeUpdates';
 import { ProgressIndicator } from '../progress/ProgressIndicator';
-import { VersionHistory, VersionTimeline } from '../version';
-import { useVersionManagement } from '../../hooks/useVersionManagement';
+// import { VersionHistory, VersionTimeline } from '../version';
+// import { useVersionManagement } from '../../hooks/useVersionManagement';
 import { QueueStatusList } from '../queue/QueueStatusList';
 
 interface ComponentDetailViewProps {
@@ -518,154 +518,154 @@ function ChatTab({ component, chatFlow, realTimeUpdates }: {
   );
 }
 
-function VersionsTab({ component, versionManagement }: { 
-  component: ComponentMetadata; 
-  versionManagement: ReturnType<typeof useVersionManagement>;
-}) {
-  const [showRollbackConfirm, setShowRollbackConfirm] = useState(false);
-  const [rollbackTarget, setRollbackTarget] = useState<any>(null);
+// function VersionsTab({ component, versionManagement }: { 
+//   component: ComponentMetadata; 
+//   versionManagement: ReturnType<typeof useVersionManagement>;
+// }) {
+//   const [showRollbackConfirm, setShowRollbackConfirm] = useState(false);
+//   const [rollbackTarget, setRollbackTarget] = useState<any>(null);
 
-  const handleVersionSelect = (_version: any) => {
-    // Version selection logic can be implemented here
-  };
+//   const handleVersionSelect = (_version: any) => {
+//     // Version selection logic can be implemented here
+//   };
 
-  const handleRollbackRequest = (version: any) => {
-    setRollbackTarget(version);
-    setShowRollbackConfirm(true);
-  };
+//   const handleRollbackRequest = (version: any) => {
+//     setRollbackTarget(version);
+//     setShowRollbackConfirm(true);
+//   };
 
-  const handleRollbackConfirm = async () => {
-    if (rollbackTarget) {
-      await versionManagement.rollbackToVersion(rollbackTarget);
-      setShowRollbackConfirm(false);
-      setRollbackTarget(null);
-    }
-  };
+//   const handleRollbackConfirm = async () => {
+//     if (rollbackTarget) {
+//       await versionManagement.rollbackToVersion(rollbackTarget);
+//       setShowRollbackConfirm(false);
+//       setRollbackTarget(null);
+//     }
+//   };
 
-  return (
-    <div className="space-y-6">
-      {/* Version Stats */}
-      {versionManagement.stats && (
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h4 className="text-lg font-semibold mb-4">Version Statistics</h4>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{versionManagement.stats.totalVersions}</div>
-              <div className="text-sm text-gray-600">Total Versions</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{versionManagement.stats.totalCommits}</div>
-              <div className="text-sm text-gray-600">Total Commits</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{versionManagement.stats.activeBranches}</div>
-              <div className="text-sm text-gray-600">Active Branches</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-600">
-                {versionManagement.stats.topContributors.length}
-              </div>
-              <div className="text-sm text-gray-600">Contributors</div>
-            </div>
-          </div>
-        </div>
-      )}
+//   return (
+//     <div className="space-y-6">
+//       {/* Version Stats */}
+//       {versionManagement.stats && (
+//         <div className="bg-gray-50 rounded-lg p-6">
+//           <h4 className="text-lg font-semibold mb-4">Version Statistics</h4>
+//           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+//             <div className="text-center">
+//               <div className="text-2xl font-bold text-blue-600">{versionManagement.stats.totalVersions}</div>
+//               <div className="text-sm text-gray-600">Total Versions</div>
+//             </div>
+//             <div className="text-center">
+//               <div className="text-2xl font-bold text-green-600">{versionManagement.stats.totalCommits}</div>
+//               <div className="text-sm text-gray-600">Total Commits</div>
+//             </div>
+//             <div className="text-center">
+//               <div className="text-2xl font-bold text-purple-600">{versionManagement.stats.activeBranches}</div>
+//               <div className="text-sm text-gray-600">Active Branches</div>
+//             </div>
+//             <div className="text-center">
+//               <div className="text-2xl font-bold text-orange-600">
+//                 {versionManagement.stats.topContributors.length}
+//               </div>
+//               <div className="text-sm text-gray-600">Contributors</div>
+//             </div>
+//           </div>
+//         </div>
+//       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Version Timeline */}
-        <div className="lg:col-span-1">
-          <VersionTimeline
-            componentId={component.id}
-            onVersionSelect={handleVersionSelect}
-            limit={8}
-          />
-        </div>
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+//         {/* Version Timeline */}
+//         <div className="lg:col-span-1">
+//           <VersionTimeline
+//             componentId={component.id}
+//             onVersionSelect={handleVersionSelect}
+//             limit={8}
+//           />
+//         </div>
 
-        {/* Version History */}
-        <div className="lg:col-span-2">
-          <VersionHistory
-            componentId={component.id}
-            onVersionSelect={handleVersionSelect}
-            onRollback={handleRollbackRequest}
-          />
-        </div>
-      </div>
+//         {/* Version History */}
+//         <div className="lg:col-span-2">
+//           <VersionHistory
+//             componentId={component.id}
+//             onVersionSelect={handleVersionSelect}
+//             onRollback={handleRollbackRequest}
+//           />
+//         </div>
+//       </div>
 
-      {/* Loading State */}
-      {versionManagement.loading && (
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">Loading version data...</span>
-        </div>
-      )}
+//       {/* Loading State */}
+//       {versionManagement.loading && (
+//         <div className="flex items-center justify-center py-8">
+//           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+//           <span className="ml-3 text-gray-600">Loading version data...</span>
+//         </div>
+//       )}
 
-      {/* Error State */}
-      {versionManagement.error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-red-800">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="font-medium">Version Management Error</span>
-          </div>
-          <p className="text-red-700 text-sm mt-1">{versionManagement.error}</p>
-          <button
-            onClick={versionManagement.clearError}
-            className="mt-2 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded text-sm transition-colors"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
+//       {/* Error State */}
+//       {versionManagement.error && (
+//         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+//           <div className="flex items-center gap-2 text-red-800">
+//             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+//                     d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+//             </svg>
+//             <span className="font-medium">Version Management Error</span>
+//           </div>
+//           <p className="text-red-700 text-sm mt-1">{versionManagement.error}</p>
+//           <button
+//             onClick={versionManagement.clearError}
+//             className="mt-2 px-3 py-1 bg-red-100 hover:bg-red-200 text-red-800 rounded text-sm transition-colors"
+//           >
+//             Dismiss
+//           </button>
+//         </div>
+//       )}
 
-      {/* Rollback Confirmation Modal */}
-      {showRollbackConfirm && rollbackTarget && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                </svg>
-                <h3 className="text-lg font-semibold text-gray-900">Confirm Rollback</h3>
-              </div>
+//       {/* Rollback Confirmation Modal */}
+//       {showRollbackConfirm && rollbackTarget && (
+//         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+//           <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+//             <div className="p-6">
+//               <div className="flex items-center gap-3 mb-4">
+//                 <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+//                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z" />
+//                 </svg>
+//                 <h3 className="text-lg font-semibold text-gray-900">Confirm Rollback</h3>
+//               </div>
 
-              <p className="text-gray-700 mb-4">
-                Are you sure you want to rollback to version <strong>{rollbackTarget.version}</strong>? 
-                This will revert all changes made after this version.
-              </p>
+//               <p className="text-gray-700 mb-4">
+//                 Are you sure you want to rollback to version <strong>{rollbackTarget.version}</strong>? 
+//                 This will revert all changes made after this version.
+//               </p>
 
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                <div className="text-yellow-800 text-sm">
-                  <strong>Warning:</strong> This action will create a backup of the current state before rolling back.
-                  Uncommitted changes may be lost.
-                </div>
-              </div>
+//               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+//                 <div className="text-yellow-800 text-sm">
+//                   <strong>Warning:</strong> This action will create a backup of the current state before rolling back.
+//                   Uncommitted changes may be lost.
+//                 </div>
+//               </div>
 
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  onClick={() => setShowRollbackConfirm(false)}
-                  className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleRollbackConfirm}
-                  disabled={versionManagement.rollbackInProgress}
-                  className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white rounded-md transition-colors flex items-center gap-2"
-                >
-                  {versionManagement.rollbackInProgress && (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  )}
-                  Rollback
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+//               <div className="flex items-center justify-end gap-3">
+//                 <button
+//                   onClick={() => setShowRollbackConfirm(false)}
+//                   className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+//                 >
+//                   Cancel
+//                 </button>
+//                 <button
+//                   onClick={handleRollbackConfirm}
+//                   disabled={versionManagement.rollbackInProgress}
+//                   className="px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-400 text-white rounded-md transition-colors flex items-center gap-2"
+//                 >
+//                   {versionManagement.rollbackInProgress && (
+//                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+//                   )}
+//                   Rollback
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }

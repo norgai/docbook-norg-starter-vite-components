@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 /**
@@ -12,114 +12,9 @@ export default function Home() {
   // Component data for the conversion theme
   const components = [
     {
-      name: 'AssuranceStrip',
-      displayName: 'Assurance Strip',
-      path: '/theme/conversion/components/AssuranceStrip',
-      thumbnail: '/components/AssuranceStrip/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.89
-    },
-    {
-      name: 'PromoBar',
-      displayName: 'Promo Bar',
-      path: '/theme/conversion/components/PromoBar',
-      thumbnail: '/components/PromoBar/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.92
-    },
-    {
-      name: 'Navbar',
-      displayName: 'Navigation Bar',
-      path: '/theme/conversion/components/Navbar',
-      thumbnail: '/components/Navbar/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.85
-    },
-    {
-      name: 'HeroBanner',
-      displayName: 'Hero Banner',
-      path: '/theme/conversion/components/HeroBanner',
-      thumbnail: '/components/HeroBanner/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.91
-    },
-    {
-      name: 'CareOptions',
-      displayName: 'Care Options',
-      path: '/theme/conversion/components/CareOptions',
-      thumbnail: '/components/CareOptions/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.88
-    },
-    {
-      name: 'ConditionGrid',
-      displayName: 'Condition Grid',
-      path: '/theme/conversion/components/ConditionGrid',
-      thumbnail: '/components/ConditionGrid/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.87
-    },
-    {
-      name: 'PayPerVisitFeatures',
-      displayName: 'Pay Per Visit Features',
-      path: '/theme/conversion/components/PayPerVisitFeatures',
-      thumbnail: '/components/PayPerVisitFeatures/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.90
-    },
-    {
-      name: 'HowItWorks',
-      displayName: 'How It Works',
-      path: '/theme/conversion/components/HowItWorks',
-      thumbnail: '/components/HowItWorks/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.93
-    },
-    {
-      name: 'MembershipBenefits',
-      displayName: 'Membership Benefits',
-      path: '/theme/conversion/components/MembershipBenefits',
-      thumbnail: '/components/MembershipBenefits/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.86
-    },
-    {
-      name: 'FAQAccordion',
-      displayName: 'FAQ Accordion',
-      path: '/theme/conversion/components/FAQAccordion',
-      thumbnail: '/components/FAQAccordion/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.89
-    },
-    {
-      name: 'CustomerReviews',
-      displayName: 'Customer Reviews',
-      path: '/theme/conversion/components/CustomerReviews',
-      thumbnail: '/components/CustomerReviews/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.84
-    },
-    {
-      name: 'CTAStrip',
-      displayName: 'CTA Strip',
-      path: '/theme/conversion/components/CTAStrip',
-      thumbnail: '/components/CTAStrip/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.91
-    },
-    {
-      name: 'ComplianceBadges',
-      displayName: 'Compliance Badges',
-      path: '/theme/conversion/components/ComplianceBadges',
-      thumbnail: '/components/ComplianceBadges/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.88
-    },
-    {
-      name: 'ExitIntentModal',
-      displayName: 'Exit Intent Modal',
-      path: '/theme/conversion/components/ExitIntentModal',
-      thumbnail: '/components/ExitIntentModal/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.82
-    },
-    {
-      name: 'Footer',
-      displayName: 'Footer',
-      path: '/theme/conversion/components/Footer',
-      thumbnail: '/components/Footer/ai_knowledge/desktop_design_v1.png',
-      similarityScore: 0.90
-    },
-    {
       name: 'MottoComponent',
       displayName: 'Motto Component',
-      path: '/theme/conversion/components/mottocomponent',
+      path: '/components/motto-component',
       thumbnail: '/components/mottocomponent/ai_knowledge/desktop_design_v1.png',
       similarityScore: 0.94
     }

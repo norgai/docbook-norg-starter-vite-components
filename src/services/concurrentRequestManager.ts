@@ -308,11 +308,12 @@ class ConcurrentRequestManager {
 
   private async handleFileChangeRequest(request: RequestQueue): Promise<any> {
     // Handle file change processing
+    const file = (request.payload.metadata?.file || "") as string;
     if (websocketService.isConnected()) {
-      websocketService.subscribeToFileChanges([request.payload.file]);
+      websocketService.subscribeToFileChanges([file]);
     }
     
-    return { acknowledged: true, file: request.payload.file };
+    return { acknowledged: true, file };
   }
 
   private async handleValidationRequest(request: RequestQueue): Promise<any> {

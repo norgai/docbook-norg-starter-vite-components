@@ -1,5 +1,4 @@
 // N8N Queue Integration Service - Updated for Queue System
-import { v4 as uuidV4 } from "uuid";
 import type {
   ChatConversation,
   ChatMessage,
