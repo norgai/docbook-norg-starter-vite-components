@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Star, Shield, Lock, Truck } from 'lucide-react';
+
+import React, { useState, useEffect } from 'react';
+import { Star, Shield, Lock, Clock, Truck } from 'lucide-react';
 
 const AssuranceStrip = () => {
   const [sticky, setSticky] = useState(false);

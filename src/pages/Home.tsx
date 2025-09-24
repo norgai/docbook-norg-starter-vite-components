@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from 'react-router-dom';
 
 /**
@@ -17,6 +16,14 @@ export default function Home() {
       path: '/components/motto-component',
       thumbnail: '/components/mottocomponent/ai_knowledge/desktop_design_v1.png',
       similarityScore: 0.94
+    },
+    {
+      id: 'assurancestrip-component',
+      name: 'AssuranceStripComponent',
+      displayName: 'AssuranceStrip Component',
+      path: '/theme/conversion/components/AssuranceStrip',
+      thumbnail: 'https://pub-8d68c3d7563546ce99e590c87ad44d51.r2.dev/1757472031790_3ykrcs8bm.png',
+      similarityScore: 0
     }
   ];
 
