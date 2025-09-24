@@ -1,11 +1,10 @@
-
-import MottoComponent from '../../../../../components/theme/conversion/components/mottocomponent/figmaToCode';
+import AssuranceStrip from '../../../../../components/theme/conversion/components/AssuranceStrip/figmaToCode';
 
 /**
- * MottoComponent Page - Displays the MottoComponent in isolation
+ * AssuranceStrip Page - Displays the AssuranceStrip in isolation
  */
-export default function MottoComponentPage() {
+export default function AssuranceStripPage() {
   return (
-    <MottoComponent />
+    <AssuranceStrip />
   );
 }

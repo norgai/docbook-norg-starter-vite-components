@@ -1,5 +1,4 @@
 import AssuranceStrip from '../../../../../components/theme/conversion/components/AssuranceStrip/figmaToCode';
-import AssuranceStripComponentPage from './pages/theme/conversion/components/AssuranceStrip/page';
 
 /**
  * AssuranceStrip Page - Displays the AssuranceStrip in isolation
